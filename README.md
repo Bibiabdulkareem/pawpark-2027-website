@@ -1,5 +1,7 @@
 # PawPark 2027
 
+**Start here:** [iPhone and new-conversation handoff](HANDOFF.md) · [Deployment](docs/DEPLOYMENT.md) · [Security review](docs/SECURITY_REVIEW.md) · [Verification](docs/VERIFICATION.md)
+
 Arabic/English website connected exclusively to the independent Firebase project **pawpark-2027-web**, display name **PawPark 2027**. Billing is disabled (Spark). No existing Firebase or Supabase project is used.
 
 - Website: https://bibiabdulkareem.github.io/pawpark-2027-website/
@@ -18,11 +20,11 @@ Admin sessions last for the browser session. Sign out on shared devices. Email/W
 
 Script: https://script.google.com/home/projects/1KV0EQ7H9PTRHXwNrSAjER_zQ-03G1JXi3Lgb9LzlB6JQY7oe93onlbq6/edit
 
-`notifications/Code.gs` and `notifications/appsscript.json` provide a Google Apps Script worker owned by bibi@pawapp.net. After its one-time Google authorization and timer installation, it polls every five minutes and sends grouped new-application references to **info@pawapp.net**. Customer contact details stay in the protected dashboard. The sender uses a dedicated Firebase Authentication worker with access only to a reference-only notification queue in this project. Its generated password stays in private Apps Script properties. It cannot read customer applications or access any other Firebase project. No Google database OAuth scope, service-account key, Firebase Functions or paid extension is used.
+`notifications/Code.gs` and `notifications/appsscript.json` provide a Google Apps Script worker owned by bibi@pawapp.net. The installed and authorized timer polls every five minutes and sends grouped new-application references to **info@pawapp.net**. Customer contact details stay in the protected dashboard. The sender uses a dedicated Firebase Authentication worker with access only to a reference-only notification queue in this project. Its generated password stays in private Apps Script properties. It cannot read customer applications or access any other Firebase project. No Google database OAuth scope, service-account key, Firebase Functions or paid extension is used.
 
-Notification activation and delivery must be verified in Apps Script before claiming that email is live. The worker checks daily mail quota and keeps unsent applications queued when exhausted. Apps Script has free per-user quotas; delivery may be delayed. See https://developers.google.com/apps-script/guides/services/quotas. A rare crash between sending an email and saving its acknowledgement may cause a duplicate notification.
+The installation and a scheduled reference-notification send were verified on 17 November 2026. The worker checks daily mail quota and keeps unsent applications queued when exhausted. Apps Script has free per-user quotas; delivery may be delayed. See https://developers.google.com/apps-script/guides/services/quotas. A rare crash between sending an email and saving its acknowledgement may cause a duplicate notification.
 
-To install: create a standalone Apps Script project under **bibi@pawapp.net**, paste `Code.gs`, enable the manifest in Project Settings and paste `appsscript.json`, then run `preparePawParkWorker`. Pin the returned worker UID in the notification-only rule (never grant customer record access), deploy and test the rules, then run `installPawParkNotifications`. Approve only external-request, send-mail and trigger permissions. It queries only the reference-only queue in `pawpark-2027-web`, installs the timer and sends a connection email. Do not add billing.
+Initial bootstrap only — do not repeat for routine development: create a standalone Apps Script project under **bibi@pawapp.net**, paste `Code.gs`, enable the manifest in Project Settings and paste `appsscript.json`, then run `preparePawParkWorker`. Pin the returned worker UID in the notification-only rule (never grant customer record access), deploy and test the rules, then run `installPawParkNotifications`. Approve only external-request, send-mail and trigger permissions. It queries only the reference-only queue in `pawpark-2027-web`, installs the timer and sends a connection email. Do not add billing.
 
 ## Spark limits and operations
 
@@ -36,7 +38,7 @@ The original CSS and all photographs are preserved. Historical SQL in `backend/`
 
 Install dependencies with `npm ci`, then install the browser with `npx playwright install chromium`. The emulator suite needs Java 21 or later.
 
-Run `npx -y firebase-tools@latest emulators:exec --only firestore,auth --project demo-pawpark-2027 --config emulators.json 'npm run test:rules && npm test'`.
+Run `npx -y firebase-tools@latest emulators:exec --only firestore,auth --project demo-pawpark-2027 --config emulators.json 'npm run test:rules && npm run test:csv && npm test'`.
 
 Tests use a demo project and emulators, not real customer data. They cover public creation, unauthorized access denial, admin workflow, invalid payloads, immutable fields, bilingual mobile/desktop layouts, cross-device synchronization, sign-out privacy, and offline confirmation behavior.
 

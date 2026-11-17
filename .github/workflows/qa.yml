@@ -24,4 +24,4 @@ jobs:
           npm ci --ignore-scripts
           npx playwright install --with-deps chromium
       - name: Test database security and bilingual flows in emulators
-        run: npx -y firebase-tools@latest emulators:exec --only firestore,auth --project demo-pawpark-2027 --config emulators.json 'npm run test:rules && npm test'
+        run: npx -y firebase-tools@latest emulators:exec --only firestore,auth --project demo-pawpark-2027 --config emulators.json 'npm run test:rules && npm run test:csv && npm test'
