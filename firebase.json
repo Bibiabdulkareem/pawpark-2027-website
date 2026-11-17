@@ -1,0 +1,1 @@
+{"firestore":{"rules":"firestore.rules","indexes":"firestore.indexes.json"},"auth":{"providers":{"emailPassword":true,"googleSignIn":{"oAuthBrandDisplayName":"PawPark 2027","supportEmail":"bibi@pawapp.net","authorizedRedirectUris":["https://pawpark-2027-web.firebaseapp.com/__/auth/handler","https://bibiabdulkareem.github.io"]}}}}

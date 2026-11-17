@@ -1,85 +1,72 @@
-const {chromium}=require("playwright");
-const assert=require("node:assert/strict");
-const {spawn}=require("node:child_process");
-async function main(){
- const server=spawn("python3",["-m","http.server","8765","--bind","127.0.0.1"],{stdio:"ignore"});
- const pause=ms=>new Promise(r=>setTimeout(r,ms));
- await pause(1800);
- let browser;
- try {
-  browser=await chromium.launch({headless:true,args:["--no-sandbox"]});
-  for(const width of [390,1440]){
-   const context=await browser.newContext({viewport:{width,height:844},isMobile:width<500,deviceScaleFactor:1});
-   const page=await context.newPage();let errors=[];
-   page.on("pageerror",e=>errors.push(e.message));
-   await page.goto("http://127.0.0.1:8765/index.html",{waitUntil:"domcontentloaded"});
-   await page.waitForSelector("#spaceForm");
-   // Check that the seven original photos and official PawApp logo are actually loaded from the repository.
-   await page.locator(".contact-img img.photo").scrollIntoViewIfNeeded();
-   // Force below-fold lazy images to load for full asset QA without altering user-facing performance.
-   await page.locator("img.photo, img.official-pawapp-logo").evaluateAll(els=>els.forEach(img=>img.loading="eager"));
-   await page.waitForFunction(() => Array.from(document.querySelectorAll("img.photo, img.official-pawapp-logo")).length === 9 && Array.from(document.querySelectorAll("img.photo, img.official-pawapp-logo")).every(img => img.complete && img.naturalWidth > 0),{timeout:30000}).catch(async err=>{throw new Error("Original image failed to load: "+JSON.stringify(await page.locator("img.photo, img.official-pawapp-logo").evaluateAll(els=>els.map(e=>({src:e.getAttribute("src"),complete:e.complete,naturalWidth:e.naturalWidth}))))+" "+err.message)});
-   const photoSummary=await page.locator("img.photo").evaluateAll(els=>els.map(img=>({file:img.getAttribute("src"),naturalWidth:img.naturalWidth,naturalHeight:img.naturalHeight,fit:getComputedStyle(img).objectFit})));
-   console.log("Loaded original photography:",photoSummary);
-   assert.equal(photoSummary.length,8);
-   assert.equal(await page.locator(".zone-grid button.zone").count(),3);
-
-   const dims=await page.evaluate(()=>({viewport:document.documentElement.clientWidth,body:document.body.scrollWidth,root:document.documentElement.scrollWidth}));
-   console.log("viewport",width,dims);
-   assert.ok(dims.body<=dims.viewport+2,"body overflows at "+width+":"+JSON.stringify(dims));
-   assert.ok(dims.root<=dims.viewport+2,"root overflows at "+width+":"+JSON.stringify(dims));
-   await page.locator("#lang").click();
-   assert.equal(await page.locator("html").getAttribute("dir"),"rtl");
-   await page.locator("#brand").fill("Sample Pet Store");
-   await page.locator("#contactPerson").fill("Test Contact");
-   await page.locator("#phone").fill("99993407");
-   await page.locator("#email").fill("demo@example.test");
-   await page.locator('[data-size="3 × 3 m"]').click();
-   await page.locator("#zone").selectOption("Pets Zone");
-   await page.locator("#spaceForm button[type=submit]").click();
-   await page.waitForSelector("#spaceResult:not(.hidden)");
-   const out=await page.locator("#spaceResult").innerText();
-   assert.ok(out.includes("Sample Pet Store"),"missing summary");
-   await page.goto("http://127.0.0.1:8765/admin.html",{waitUntil:"domcontentloaded"});
-   await page.waitForSelector(".request");
-   assert.equal(await page.locator(".request").count(),1);
-   assert.ok((await page.locator(".request").first().innerText()).includes("Test Contact"));
-   assert.equal(await page.locator(".request a[href^='tel:']").count(),1);
-   await page.locator("#lang").click();
-   assert.equal(await page.locator("html").getAttribute("dir"),"rtl");
-   assert.ok((await page.locator(".request").first().innerText()).includes("رقم الهاتف"));
-
-   // Admin replies: changing status should load the matching bilingual message template.
-   await page.locator(".manage .status-wrap select").first().selectOption("Approved");
-   let draft=await page.locator(".reply-tools textarea").inputValue();
-   assert.ok(draft.includes("الموافقة المبدئية"),"Arabic approved template missing");
-   const emailHref=await page.locator(".reply-tools a.email").getAttribute("href");
-   assert.ok(emailHref.startsWith("mailto:demo%40example.test")||emailHref.startsWith("mailto:demo@example.test"),"Missing email recipient");
-   assert.ok(decodeURIComponent(emailHref).includes("الموافقة المبدئية"),"Email draft body missing");
-   const waHref=await page.locator(".reply-tools a.whatsapp").getAttribute("href");
-   assert.ok(waHref.startsWith("https://wa.me/96599993407?text="),"Incorrect Kuwaiti WhatsApp link: "+waHref);
-   assert.ok(decodeURIComponent(waHref).includes("الموافقة المبدئية"),"WhatsApp draft missing");
-   await page.locator(".reply-controls select").selectOption("en");
-   draft=await page.locator(".reply-tools textarea").inputValue();
-   assert.ok(draft.includes("preliminary approval"),"English approved template missing");
-   await page.locator(".reply-tools textarea").fill("Custom follow-up for Pet Store");
-   await page.locator(".manage .status-wrap select").last().selectOption("Preparing");
-   await page.reload({waitUntil:"domcontentloaded"});
-   await page.locator(".request").waitFor();
-   assert.equal(await page.locator(".reply-tools textarea").inputValue(),"Custom follow-up for Pet Store","Edited message did not persist");
-   assert.equal(await page.locator(".manage .status-wrap select").last().inputValue(),"Preparing","Contract stage did not persist");
-   await page.locator("#contractFilter").selectOption("Preparing");
-   assert.equal(await page.locator(".request").count(),1,"Contract filter lost the request");
-   await page.locator("#contractFilter").selectOption("Signed");
-   assert.equal(await page.locator(".request").count(),0,"Contract filter should exclude the request");
-   await page.locator("#contractFilter").selectOption("all");
-   await page.locator(".lifecycle button").click();
-   const contactSaved=await page.evaluate(()=>JSON.parse(localStorage.getItem("pawpark_demo_requests")||"[]")[0].contactedAt);
-   assert.ok(contactSaved,"Contacted timestamp was not saved");
-   assert.deepEqual(errors,[]);
-   await context.close();
-   console.log("PASS",width);
-  }
- } finally {if(browser)await browser.close();server.kill();}
+const {chromium}=require('playwright');
+const assert=require('node:assert/strict');
+const {spawn}=require('node:child_process');
+const base='http://127.0.0.1:8765';
+async function login(page,email='bibi@pawapp.net'){
+ await page.evaluate(async email=>{
+  const {auth}=await import('./firebase-backend.js');
+  const {signInWithCredential,GoogleAuthProvider}=await import('https://www.gstatic.com/firebasejs/13.4.0/firebase-auth.js');
+  const encode=x=>btoa(JSON.stringify(x)).replace(/=/g,'').replace(/\+/g,'-').replace(/\//g,'_');
+  const token=encode({alg:'none',typ:'JWT'})+'.'+encode({sub:email,email,email_verified:true,name:'QA Admin',iss:'https://accounts.google.com',aud:'demo-pawpark-2027'})+'.';
+  await signInWithCredential(auth,GoogleAuthProvider.credential(token));
+ },email);
 }
-main().catch(e=>{console.error("QA FAILED:",e);process.exitCode=1;});
+(async()=>{
+ const server=spawn('python3',['-m','http.server','8765','--bind','127.0.0.1'],{stdio:'ignore'});
+ let browser;try{
+  browser=await chromium.launch({headless:true,args:['--no-sandbox']});
+  for(const width of [390,1440]){
+   await fetch('http://127.0.0.1:8085/emulator/v1/projects/demo-pawpark-2027/databases/(default)/documents',{method:'DELETE'});
+   const visitor=await browser.newContext({viewport:{width,height:844},isMobile:width<500});
+   const staff=await browser.newContext({viewport:{width,height:844}});
+   await visitor.addInitScript(()=>window.PAWPARK_EMULATORS=true);
+   await staff.addInitScript(()=>window.PAWPARK_EMULATORS=true);
+   const page=await visitor.newPage(),admin=await staff.newPage(),errors=[];
+   page.on('pageerror',e=>errors.push(e.message));admin.on('pageerror',e=>errors.push(e.message));
+   await page.goto(base+'/index.html');
+   await page.waitForFunction(()=>document.querySelector('.hero h1').textContent.includes('PAWPARK'));
+   await page.locator('img.photo,img.official-pawapp-logo').evaluateAll(imgs=>imgs.forEach(img=>img.loading='eager'));
+   await page.waitForFunction(()=>Array.from(document.querySelectorAll('img.photo,img.official-pawapp-logo')).every(i=>i.complete&&i.naturalWidth>0));
+   assert.equal(await page.locator('img.photo').count(),8);
+   assert.equal(await page.locator('.zone').count(),3);
+   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+2));
+   await page.locator('#lang').click();assert.equal(await page.locator('html').getAttribute('dir'),'rtl');
+   await page.locator('#brand').fill('Fictional QA Brand');await page.locator('#contactPerson').fill('QA Contact');
+   await page.locator('#phone').fill('99999999');await page.locator('#email').fill('qa@example.test');
+   await page.locator('[data-size="3 × 3 m"]').click();await page.locator('#zone').selectOption('Pets Zone');
+   await page.locator('#spaceForm button[type=submit]').click();await page.locator('#spaceResult:not(.hidden)').waitFor();
+   assert.match(await page.locator('.confirm-ref-number').innerText(),/^PP27-[a-zA-Z0-9]{20}$/);
+   assert.equal(await page.evaluate(()=>localStorage.getItem('pawpark_demo_requests')),null);
+   await admin.goto(base+'/admin.html');await admin.locator('#signIn').waitFor();
+   assert.equal(await admin.locator('#dashboard').isVisible(),false);
+   await login(admin,'other@example.test');await admin.waitForFunction(()=>document.querySelector('#authState').textContent.includes('not authorized'));
+   assert.equal(await admin.locator('.request-head').count(),0);
+   await login(admin);await admin.locator('.request-head').waitFor();
+   assert.match(await admin.locator('#list').innerText(),/QA Contact/);
+   await admin.locator('#lang').click();assert.equal(await admin.locator('html').getAttribute('dir'),'rtl');
+   await admin.locator('.manage .status-wrap select').first().selectOption('Approved');
+   await admin.waitForFunction(()=>document.querySelector('#saveState').textContent.includes('تم حفظ'));
+   assert.match(await admin.locator('.reply-tools textarea').inputValue(),/الموافقة المبدئية/);
+   await admin.locator('.manage .notes-wrap textarea').fill('QA persisted note');await admin.locator('#search').click();
+   await admin.waitForFunction(()=>document.querySelector('#saveState').textContent.includes('تم حفظ'));
+   await admin.locator('.manage .status-wrap select').last().selectOption('Preparing');
+   await admin.waitForFunction(()=>document.querySelector('#saveState').textContent.includes('تم حفظ'));
+   await admin.reload();await admin.locator('.request-head').waitFor();
+   assert.equal(await admin.locator('.manage .notes-wrap textarea').inputValue(),'QA persisted note');
+   assert.equal(await admin.locator('.manage .status-wrap select').first().inputValue(),'Approved');
+   assert.equal(await admin.locator('.manage .status-wrap select').last().inputValue(),'Preparing');
+   await page.locator('#show').selectOption('Pet Fashion Show');await page.locator('#owner').fill('QA Owner');await page.locator('#petPhone').fill('99999999');await page.locator('#petName').fill('QA Pet');await page.locator('#species').selectOption('Dog');
+   await page.locator('#petForm button[type=submit]').click();await page.locator('#petResult:not(.hidden)').waitFor();
+   await admin.waitForFunction(()=>document.querySelector('#total').textContent==='2');
+   await admin.locator('#signOut').click();await admin.locator('#signIn').waitFor();assert.equal(await admin.locator('.request-head').count(),0);
+   // Force a write failure: no success receipt may be shown.
+   await page.reload();await page.waitForFunction(()=>document.querySelector('.hero h1').textContent.includes('PAWPARK'));
+   await page.locator('#brand').fill('QA Failure');await page.locator('#contactPerson').fill('QA Contact');await page.locator('#phone').fill('99999999');await page.locator('#email').fill('qa@example.test');await page.locator('[data-size="3 × 3 m"]').click();await page.locator('#zone').selectOption('Pets Zone');
+   await page.evaluate(async()=>{const {db}=await import('./firebase-backend.js');const {disableNetwork}=await import('https://www.gstatic.com/firebasejs/13.4.0/firebase-firestore.js');await disableNetwork(db)});
+   await page.locator('#spaceForm button[type=submit]').click();
+   assert.equal(await page.locator('#spaceResult').isVisible(),false);assert.equal(await page.locator('#spaceForm button[type=submit]').isDisabled(),true);
+   assert.deepEqual(errors,[]);
+   await visitor.close();await staff.close();console.log('PASS responsive bilingual UI, original photos, separate-device storage, admin gate, persisted workflow, live pet registration, sign-out privacy and offline confirmation guard:',width);
+  }
+ }finally{if(browser)await browser.close();server.kill()}
+})().catch(e=>{console.error(e);process.exitCode=1});

@@ -33,7 +33,7 @@ html[dir="rtl"] .hero-copy{padding:70px 0 60px 38px;align-items:flex-start}html[
 .result .confirm-social-link{display:inline-flex;align-items:center;justify-content:center;min-height:43px;border-radius:10px;padding:10px 16px;background:#003e8e;color:#fff!important;font-size:13px;font-weight:800;text-decoration:none}
 .result .confirm-social-link:hover,.result .confirm-social-link:focus-visible{background:#072b64;text-decoration:none}</style></head>
 <body>
-<div class="demo" data-en="DESIGN & BOOKING DEMO — requests stay only in this browser; no real email is sent." data-ar="نسخة تجريبية للتصميم والحجز — الطلبات تبقى على هذا المتصفح فقط، ولا يُرسل إيميل فعلي."></div>
+<div class="demo" data-en="PAWPARK 2027 — Submit your application securely. All requests are subject to review." data-ar="باو بارك ٢٠٢٧ — قدّم طلبك بأمان. جميع الطلبات تخضع للمراجعة."></div>
 <header class="top"><div class="container top-inner">
 <a href="#home" class="brand" aria-label="PawApp"><img class="official-pawapp-logo" src="assets/pawapp-logo.jpg" alt="PawApp official logo" width="42" height="42"><span class="brand-word">Paw<span>App</span></span></a>
 <nav class="topnav"><a class="navlink" href="#zones" data-en="EXPLORE ZONES" data-ar="استكشف المناطق"></a><button id="lang" class="pill" type="button" aria-label="Switch language">العربية</button><a href="#book" class="btn yellow" data-en="BOOK YOUR SPACE" data-ar="احجز مساحتك"></a></nav>
@@ -62,13 +62,13 @@ html[dir="rtl"] .hero-copy{padding:70px 0 60px 38px;align-items:flex-start}html[
 <div class="form-panel"><form id="spaceForm" novalidate>
 <div class="field"><label for="brand" data-en="Business Name *" data-ar="اسم النشاط التجاري *"></label><input id="brand" required autocomplete="organization" maxlength="110"></div>
 <div class="field"><label for="contactPerson" data-en="Contact Person *" data-ar="اسم مسؤول التواصل *"></label><input id="contactPerson" required maxlength="100"></div>
-<div class="field"><label for="phone" data-en="Phone / WhatsApp *" data-ar="رقم الهاتف / واتساب *"></label><input id="phone" type="tel" inputmode="tel" required autocomplete="tel" dir="ltr"></div>
-<div class="field"><label for="email" data-en="Email Address *" data-ar="البريد الإلكتروني *"></label><input id="email" type="email" required autocomplete="email" dir="ltr"></div>
+<div class="field"><label for="phone" data-en="Phone / WhatsApp *" data-ar="رقم الهاتف / واتساب *"></label><input id="phone" type="tel" inputmode="tel" required autocomplete="tel" dir="ltr" maxlength="30"></div>
+<div class="field"><label for="email" data-en="Email Address *" data-ar="البريد الإلكتروني *"></label><input id="email" type="email" required autocomplete="email" dir="ltr" maxlength="254"></div>
 <div class="field"><label class="legend" data-en="Choose Your Space Size *" data-ar="اختَر حجم المساحة *"></label><div class="sizes">
 <button class="size" type="button" data-size="3 × 3 m" aria-pressed="false" data-en="SMALL · 3×3" data-ar="صغير · ٣×٣"></button>
 <button class="size" type="button" data-size="3 × 4 m" aria-pressed="false" data-en="MEDIUM · 3×4" data-ar="متوسط · ٣×٤"></button>
 <button class="size" type="button" data-size="Custom" aria-pressed="false" data-en="CUSTOM" data-ar="مقاس خاص"></button></div></div>
-<div class="field hidden" id="customBox"><label for="custom" data-en="Your requested custom size" data-ar="المقاس الخاص المطلوب"></label><textarea id="custom" rows="2"></textarea></div>
+<div class="field hidden" id="customBox"><label for="custom" data-en="Your requested custom size" data-ar="المقاس الخاص المطلوب"></label><textarea id="custom" rows="2" maxlength="2000"></textarea></div>
 <div class="field"><label for="zone" data-en="Preferred Zone *" data-ar="المنطقة المفضلة *"></label><select id="zone" required>
 <option value="" data-en="Choose a zone" data-ar="اختَر منطقة"></option><option value="Kids Zone" data-en="Kids Zone" data-ar="منطقة الأطفال"></option><option value="Pets Zone" data-en="Pets Zone" data-ar="منطقة الحيوانات"></option><option value="Food & Beverages" data-en="Food & Beverages" data-ar="المأكولات والمشروبات"></option><option value="Trucks" data-en="Trucks (request form only)" data-ar="العربات (في النموذج فقط)"></option></select></div>
 <p class="notice" data-en="No payment now. This is a request, not a confirmed reservation." data-ar="لا يوجد دفع الآن. هذا طلب مبدئي وليس حجزًا مؤكدًا."></p><p class="error" id="spaceErr" aria-live="polite"></p>
@@ -79,14 +79,14 @@ html[dir="rtl"] .hero-copy{padding:70px 0 60px 38px;align-items:flex-start}html[
 <div class="show-grid"><div class="show-left"><div class="show-band" data-en="PET SHOW REGISTRATION" data-ar="التسجيل في عروض الحيوانات"></div><div class="media has-photo show-image"><img class="photo" src="assets/pet-show-poodle.jpg" alt="Gray poodle on an elegant warm cream background" loading="lazy" decoding="async" width="769" height="767"></div></div>
 <div class="show-form"><form id="petForm" novalidate>
 <div class="field"><label for="show" data-en="Your Selected Show *" data-ar="العرض المطلوب *"></label><select id="show" required><option value="" data-en="Choose a show" data-ar="اختَر العرض"></option><option value="Pet Fashion Show" data-en="Pet Fashion Show" data-ar="عرض أزياء الحيوانات"></option><option value="Training Show" data-en="Training Show" data-ar="عرض التدريب"></option><option value="Pet Beauty & Wellness Championship" data-en="Pet Beauty & Wellness Championship" data-ar="بطولة جمال وصحة الحيوانات"></option></select></div>
-<div class="field"><label for="owner" data-en="Owner's Full Name *" data-ar="اسم المالك بالكامل *"></label><input id="owner" required maxlength="110"></div><div class="field"><label for="petPhone" data-en="Phone Number *" data-ar="رقم الهاتف *"></label><input id="petPhone" type="tel" inputmode="tel" dir="ltr" required></div>
-<div class="field"><label for="petEmail" data-en="Email Address" data-ar="البريد الإلكتروني"></label><input id="petEmail" type="email" dir="ltr"></div><div class="field"><label for="petName" data-en="Pet's Name *" data-ar="اسم الأليف *"></label><input id="petName" required></div>
+<div class="field"><label for="owner" data-en="Owner's Full Name *" data-ar="اسم المالك بالكامل *"></label><input id="owner" required maxlength="110"></div><div class="field"><label for="petPhone" data-en="Phone Number *" data-ar="رقم الهاتف *"></label><input id="petPhone" type="tel" inputmode="tel" dir="ltr" required maxlength="30"></div>
+<div class="field"><label for="petEmail" data-en="Email Address" data-ar="البريد الإلكتروني"></label><input id="petEmail" type="email" dir="ltr" maxlength="254"></div><div class="field"><label for="petName" data-en="Pet's Name *" data-ar="اسم الأليف *"></label><input id="petName" required maxlength="100"></div>
 <div class="field"><label for="species" data-en="Pet Type *" data-ar="نوع الحيوان *"></label><select id="species" required><option value="" data-en="Choose" data-ar="اختَر"></option><option value="Dog" data-en="Dog" data-ar="كلب"></option><option value="Cat" data-en="Cat" data-ar="قط"></option></select></div>
-<div class="field"><label for="breed" data-en="Pet Breed" data-ar="سلالة الحيوان"></label><input id="breed"></div><div class="field"><label for="age" data-en="Pet Age" data-ar="عمر الحيوان"></label><input id="age"></div>
+<div class="field"><label for="breed" data-en="Pet Breed" data-ar="سلالة الحيوان"></label><input id="breed" maxlength="100"></div><div class="field"><label for="age" data-en="Pet Age" data-ar="عمر الحيوان"></label><input id="age" maxlength="50"></div>
 <p class="error" id="petErr" aria-live="polite"></p><button class="btn beige" style="width:100%" type="submit" data-en="SUBMIT REGISTRATION" data-ar="إرسال طلب التسجيل"></button></form><div id="petResult" class="result hidden" aria-live="polite"></div></div></div>
 </div></section>
 <section class="contact" id="contact"><div class="container contact-grid"><div><h2 class="heading"><span class="band" data-en="CONTACT US" data-ar="تواصل معانا"></span></h2><div class="contact-card"><a href="tel:+96541117003">☎ 41117003</a><a href="mailto:info@pawapp.net">✉ info@pawapp.net</a></div></div><div class="media has-photo contact-img"><img class="photo" src="assets/contact-dog.jpg" alt="Happy brown dog at PawPark contact section" loading="lazy" decoding="async" width="803" height="768"></div></div></section>
-</main><footer class="footer"><p><strong data-en="PAWPARK 2027 · IN COLLABORATION WITH PAWAPP" data-ar="باو بارك ٢٠٢٧ · بالتعاون مع باو أب"></strong></p><p data-en="Design preview — bookings are not yet sent to organizers." data-ar="معاينة التصميم — طلبات الحجز لا تُرسل للمنظمين حاليًا."></p></footer>
+</main><footer class="footer"><p><strong data-en="PAWPARK 2027 · IN COLLABORATION WITH PAWAPP" data-ar="باو بارك ٢٠٢٧ · بالتعاون مع باو أب"></strong></p><p data-en="Applications are securely saved for review by the PawPark team." data-ar="تُحفظ الطلبات بأمان ليُراجعها فريق باو بارك."></p></footer>
 <script>
 (function(){
 "use strict";
@@ -104,23 +104,37 @@ Object.keys(lastReceipts).forEach(function(target){var item=lastReceipts[target]
 $("lang").addEventListener("click",function(){lang=lang==="en"?"ar":"en";updateLanguage()});
 entries("[data-size]").forEach(function(el){el.addEventListener("click",function(){chosenSize=el.dataset.size;entries("[data-size]").forEach(function(n){n.classList.toggle("active",n.dataset.size===chosenSize);n.setAttribute("aria-pressed",String(n.dataset.size===chosenSize))});$("customBox").classList.toggle("hidden",chosenSize!=="Custom")})});
 entries(".zone").forEach(function(el){el.addEventListener("click",function(){$("zone").value=el.dataset.zone;document.getElementById("book").scrollIntoView({behavior:"smooth"});setTimeout(function(){$("zone").focus({preventScroll:true})},250)})});
-function put(key,obj){var a=[];try{a=JSON.parse(localStorage.getItem("pawpark_demo_requests")||"[]");if(!Array.isArray(a))a=[]}catch(e){}a.unshift(Object.assign({id:"DEMO-"+Date.now().toString(36).toUpperCase(),date:new Date().toISOString(),type:key,status:"Demo - not submitted"},obj));localStorage.setItem("pawpark_demo_requests",JSON.stringify(a.slice(0,200)));return a[0]}
+async function send(formId,type,o,target,errorId){
+ var form=$(formId),button=form.querySelector('button[type="submit"]');
+ if(button.disabled)return;
+ button.disabled=true;button.setAttribute("aria-busy","true");
+ $(errorId).textContent=tr("Saving your request… Please wait for confirmation.","جاري حفظ طلبك… يرجى انتظار التأكيد.");
+ try{
+  var backend=await import('./firebase-backend.js');
+  var r=await backend.submitApplication(type,o,lang);
+  $(errorId).textContent="";receipt(r.id,o,target);
+  $(target).scrollIntoView({behavior:"smooth",block:"nearest"});
+  form.reset();
+  if(formId==="spaceForm"){chosenSize="";entries("[data-size]").forEach(n=>{n.classList.remove("active");n.setAttribute("aria-pressed","false")});$("customBox").classList.add("hidden")}
+ }catch(error){$(errorId).textContent=tr("We could not confirm your request was saved. Keep this page open, check your connection and try again. If this continues, contact info@pawapp.net.","تعذر تأكيد حفظ طلبك. أبقِ الصفحة مفتوحة وتحقق من الاتصال ثم حاول مجددًا. إذا استمرت المشكلة تواصل مع info@pawapp.net.")}
+ finally{button.disabled=false;button.removeAttribute("aria-busy")}
+}
 function receipt(id,obj,target){
  lastReceipts[target]={id:id,obj:obj};
  var root=$(target);root.classList.remove("hidden");root.replaceChildren();
  function putText(tag,cls,value,parent){var e=document.createElement(tag);e.className=cls;e.textContent=value;(parent||root).appendChild(e);return e}
  putText("div","confirm-icon","🐾");
- putText("h3","confirm-heading",tr("Your test request has been recorded!","تم تسجيل طلبك التجريبي!"));
+ putText("h3","confirm-heading",tr("Your request has been received!","تم استلام طلبك!"));
  putText("p","confirm-lead",tr("Thank you for your interest in PawPark 2027.","شكرًا لاهتمامك بالمشاركة في باو بارك ٢٠٢٧."));
  var ref=putText("div","confirm-reference","");
- putText("span","confirm-ref-label",tr("Test reference number","رقم الطلب التجريبي"),ref);
+ putText("span","confirm-ref-label",tr("Request reference number","رقم الطلب"),ref);
  putText("strong","confirm-ref-number",id,ref);
- putText("span","confirm-status",tr("Preview status: Pending Review","حالة تجريبية: قيد المراجعة"),ref);
+ putText("span","confirm-status",tr("Status: Pending Review","الحالة: قيد المراجعة"),ref);
  var party=obj.brand||obj.owner||"";
  var choice=obj.space||obj.show||"";
  var zone=obj.zone?(tr(" · Preferred zone: "," · المنطقة المفضلة: ")+obj.zone):"";
  putText("p","confirm-detail",tr("Request: ","الطلب: ")+party+" — "+choice+zone);
- putText("p","confirm-note",tr("Once real submissions are enabled, the PawPark team will review your request and contact you with the next steps as soon as possible.","بعد تفعيل استقبال الطلبات الحقيقي، يراجع فريق باو بارك طلبك ويتواصل معاك بأقرب وقت بخصوص الخطوات القادمة."));
+ putText("p","confirm-note",tr("The PawPark team will review your request and contact you with the next steps. This is not a confirmed booking.","سيراجع فريق باو بارك طلبك ويتواصل معك بخصوص الخطوات القادمة. هذا ليس حجزًا مؤكدًا."));
  var more=putText("div","confirm-social","");
  putText("p","confirm-social-text",tr("Want to know more about PawPark 2027 and upcoming event announcements? Follow PawApp on Instagram.","تبي تعرف أكثر عن باو بارك ٢٠٢٧ وآخر أخبار الفعالية؟ تابع حساب باو أب على إنستغرام."),more);
  var social=document.createElement("a");
@@ -129,12 +143,11 @@ function receipt(id,obj,target){
  social.target="_blank";social.rel="noopener noreferrer";
  social.textContent=tr("Follow PawApp on Instagram","تابع باو أب على إنستغرام");
  more.appendChild(social);
- putText("p","confirm-demo",tr("TEST ONLY — this request was not sent to PawPark. It is saved on this browser only and cannot be seen on other devices.","تجربة فقط — هذا الطلب ما وصل لفريق باو بارك. محفوظ على هالمتصفح فقط وما يظهر على الأجهزة الثانية."));
- if(new URLSearchParams(location.search).get("admin_demo")==="1"){var link=document.createElement("a");link.href="admin.html";link.className="btn beige";link.textContent=tr("OPEN ADMIN DEMO ON THIS DEVICE","افتح معاينة لوحة الإدارة على نفس الجهاز");root.appendChild(link)}
+
 }
 function validEmail(x){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(x)}function validPhone(x){return x.replace(/\D/g,"").length>=7}
-$("spaceForm").addEventListener("submit",function(e){e.preventDefault();var o={brand:val("brand"),contact:val("contactPerson"),phone:val("phone"),email:val("email"),space:chosenSize,zone:val("zone"),custom:val("custom")};if(!o.brand||!o.contact||!o.phone||!o.email||!o.space||!o.zone||!validEmail(o.email)||!validPhone(o.phone)||(o.space==="Custom"&&!o.custom)){$("spaceErr").textContent=tr("Please enter your details, a valid phone and email, and choose a space and zone.","يرجى تعبئة البيانات ورقم وإيميل صحيحين واختيار المقاس والمنطقة.");return}$("spaceErr").textContent="";var r=put("Space request",o);receipt(r.id,o,"spaceResult");$("spaceResult").scrollIntoView({behavior:"smooth",block:"nearest"})});
-$("petForm").addEventListener("submit",function(e){e.preventDefault();var o={show:val("show"),owner:val("owner"),phone:val("petPhone"),email:val("petEmail"),pet:val("petName"),species:val("species"),breed:val("breed"),age:val("age")};if(!o.show||!o.owner||!o.phone||!o.pet||!o.species||!validPhone(o.phone)||(o.email&&!validEmail(o.email))){$("petErr").textContent=tr("Complete the required fields and check the phone/email.","عبّئ الحقول المطلوبة وتأكد من الرقم والإيميل.");return}$("petErr").textContent="";var r=put("Pet show",o);receipt(r.id,o,"petResult");$("petResult").scrollIntoView({behavior:"smooth",block:"nearest"})});
+$("spaceForm").addEventListener("submit",function(e){e.preventDefault();var o={brand:val("brand"),contact:val("contactPerson"),phone:val("phone"),email:val("email"),space:chosenSize,zone:val("zone"),custom:val("custom")};if(!o.brand||!o.contact||!o.phone||!o.email||!o.space||!o.zone||!validEmail(o.email)||!validPhone(o.phone)||(o.space==="Custom"&&!o.custom)){$("spaceErr").textContent=tr("Please enter your details, a valid phone and email, and choose a space and zone.","يرجى تعبئة البيانات ورقم وإيميل صحيحين واختيار المقاس والمنطقة.");return}$("spaceErr").textContent="";send("spaceForm","Space request",o,"spaceResult","spaceErr")});
+$("petForm").addEventListener("submit",function(e){e.preventDefault();var o={show:val("show"),owner:val("owner"),phone:val("petPhone"),email:val("petEmail"),pet:val("petName"),species:val("species"),breed:val("breed"),age:val("age")};if(!o.show||!o.owner||!o.phone||!o.pet||!o.species||!validPhone(o.phone)||(o.email&&!validEmail(o.email))){$("petErr").textContent=tr("Complete the required fields and check the phone/email.","عبّئ الحقول المطلوبة وتأكد من الرقم والإيميل.");return}$("petErr").textContent="";send("petForm","Pet show",o,"petResult","petErr")});
 updateLanguage();
 })();
 </script>

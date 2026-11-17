@@ -1,51 +1,21 @@
-# PawPark 2027 — QA and Notifications Plan (Draft)
+# PawPark 2027 — Verification and notification status
 
-Last reviewed: 2026-11-17
+## Scope
 
-## Actual browser QA of existing HTML prototype
-Test file: `PawPark2027_Canva_Accurate_Photos_Bilingual_Booking.html` (previously supplied; *not yet hosted in this repository*).
+The Firebase integration exclusively uses the newly created **pawpark-2027-web** Spark project. Firestore Standard is in Frankfurt (europe-west3), with deletion protection enabled. Billing is disabled. No existing Firebase or Supabase project was inspected or changed. All existing photograph and CSS files are unchanged.
 
-Tested in headless Chromium with viewport sizes:
-- iPhone-style: 390 × 844
-- Desktop: 1440 × 900 (plus custom/pet registration at 1366 × 768)
+## Required verification
 
-Passing in this browser environment:
-- EN → AR changes html lang/dir to ar/rtl and visible heading/labels.
-- User-entered form data remains present when toggling language.
-- 3 visual zone cards displayed.
-- Space size selection and custom-size conditional field.
-- Choosing a zone and submitting a sample space request produces a visible summary.
-- Pet Show registration produces a visible summary.
-- No JavaScript page errors in the automated runs.
-- No document horizontal overflow at tested mobile/desktop widths.
+The automated rules suite verifies valid space/pet requests; denial of customer reads to visitors, other Google accounts, unverified accounts and wrong providers; permitted admin review and agreement changes; forbidden deletion; immutable original details/timestamps; bounds, field types, missing required fields and role-escalation attempts.
 
-NOT tested/verified yet:
-- iOS Safari running in a real iPhone.
-- Pixel-for-pixel matching with the current Canva mobile and desktop screens.
-- Image quality/crop accuracy: original licensed exports still required.
-- Actual server-side save/automatic email notification: **NOT IMPLEMENTED in prototype**.
-- Real authenticated admin dashboard: **NOT IMPLEMENTED**.
+The browser suite uses separate visitor and admin sessions at mobile and desktop widths. It verifies Arabic/English direction, original image loading, no horizontal overflow, database-confirmed receipts, no customer localStorage, cross-device application visibility, unauthorized admin denial, status/notes/agreement persistence, pet registration updates, sign-out privacy and no false success while offline.
 
-CRITICAL: Current prototype generates mailto/WhatsApp links. A visitor must complete a separate email/WhatsApp action to transmit, so it MUST NOT be called an actual online booking system yet.
+Tests use **demo-pawpark-2027** emulators. Production rules are compiled during deployment. Before broad public launch, the prototype rules and spam controls should be reviewed. Real Google login on the published GitHub Pages domain and a live test application should also be verified.
 
-## Proposed applicant flow (pending user approval)
-Visitor fills bilingual space or pet-show form → server validates request → secure database saves → reference number created → email notification sent to organizer → visitor gets 'request received / pending review' screen only after confirmed save.
+## Organizer email
 
-No payment or auto-confirmation.
+Recipient: **info@pawapp.net**. Free Google Apps Script source and explicit permissions are in `notifications/`. The created script is named **PawPark 2027 — Free Application Notifications**, owned by **bibi@pawapp.net**.
 
-## Proposed organizer-only flow
-- Separate private route `/admin`, authenticated admin accounts and enforced server-side permissions (not hidden HTML only).
-- Admin dashboard with New/Pending/Under Review/Approved/Rejected/Waitlisted statuses; search by name/mobile; filter by zone and space size; assigned final spot; approved prices and internal notes.
-- Unread/new count visible *inside the dashboard* to signed-in staff.
-- Automatic email notification for each valid new request, with request reference and summary; emails remain useful if admin is offline.
-- No need to use the busy PawApp WhatsApp Business phone. Optional browser push notifications may be added later if explicitly enabled.
-- Consider a separately provisioned Supabase project/backend so the PawPark application database is isolated from PawApp Concierge CRM. No client-side service-role credentials; strong RLS/permissions, privacy safeguards and server-side anti-spam.
+The dedicated Firebase worker is prepared and its UID is restricted in the rules to the reference-only queue. The Google consent uses external-request, send-mail and background-trigger permissions only; no Google database scope. A successful installation run is required before automatic email is active. Once installed, a five-minute trigger sends grouped application references and the protected dashboard URL, while customer contact information stays in Firestore. Unsent notifications remain queued on quota exhaustion. No paid Firebase email extension or Cloud Functions deployment is configured.
 
-## Confirmed organizer notification email (2026-11-17)
-- **Official recipient: `info@pawapp.net`** — explicitly confirmed by the organizer.
-- `info@bauapp.net` was a typo and must never be used.
-- Configure this email as notification recipient once the secure backend and email service are ready, and verify successful delivery before launch.
-
-## Design baseline
-Use exact latest Canva source (not screenshot crops) and original high-resolution photographs supplied by user.
-Original image exports remain pending. Do not substitute low-resolution screenshot crops as approved final assets.
+Admin reply buttons remain manually sent email/WhatsApp drafts, with bilingual editable templates. Recording contact or agreement progress does not prove message delivery or execute a contract.

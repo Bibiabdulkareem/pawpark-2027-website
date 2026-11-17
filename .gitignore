@@ -1,0 +1,6 @@
+node_modules/
+work/
+*-debug.log
+*.log
+.firebase/
+test-results/
