@@ -21,7 +21,7 @@ async function main(){
    await page.locator("#lang").click();
    assert.equal(await page.locator("html").getAttribute("dir"),"rtl");
    await page.locator("#brand").fill("Sample Pet Store");
-   await page.locator("#contact").fill("Test Contact");
+   await page.locator("#contactPerson").fill("Test Contact");
    await page.locator("#phone").fill("99993407");
    await page.locator("#email").fill("demo@example.test");
    await page.locator('[data-size="3 × 3 m"]').click();
