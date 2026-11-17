@@ -156,6 +156,7 @@ function contactButtons(parent,row){
  var subject=subjectOf(row,status,messageLang);
  subjectBox.textContent=tr("Subject: ","الموضوع: ")+subject;
  var actions=put(box,"div","actions");
+ var call=put(actions,"a","btn alt",tr("☎ Call","☎ اتصال"));call.href=phoneHref(row.phone);
  var email=put(actions,"a","btn email",tr("✉ Email draft","✉ رسالة إيميل"));
  var wa=put(actions,"a","btn whatsapp",tr("💬 WhatsApp draft","💬 رسالة واتساب"));
  var copy=put(actions,"button","btn copy",tr("Copy message","نسخ الرسالة"));copy.type="button";
