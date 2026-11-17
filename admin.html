@@ -53,7 +53,7 @@ main{padding:25px 0 65px}
 .bottom{margin-top:27px;font-size:12px;color:#587087}
 @media(max-width:680px){.wrap{width:calc(100% - 24px)}.top h1{font-size:21px}.nav-actions{gap:7px}.nav-actions a{font-size:11px}.nav-actions .btn{padding:8px;font-size:12px}.stats{gap:6px}.stat{padding:12px 9px}.stat strong{font-size:23px}.stat span{font-size:10px}.filters input{min-width:130px}.filters select{flex:1;min-width:130px}.filters .btn{flex:1}.request{padding:14px}.request h3{font-size:18px}.fields{grid-template-columns:1fr 1fr;gap:12px}.field b{font-size:13px}.actions .btn{flex:1;justify-content:center}.manage{display:block}.manage .status-wrap,.manage .notes-wrap{display:block;margin-bottom:13px;width:100%}}
 @media(max-width:350px){.fields{grid-template-columns:1fr}}
-</style></head>
+</style><link rel="stylesheet" href="admin-communications.css?v=1"></head>
 <body>
 <header><div class="wrap top"><h1 data-en="PawPark · Request Inbox" data-ar="باو بارك · صندوق الطلبات"></h1>
 <div class="nav-actions"><button class="btn" id="lang" type="button">العربية</button><a href="index.html" data-en="Visitor website" data-ar="موقع الزوار"></a></div>
@@ -65,11 +65,13 @@ main{padding:25px 0 65px}
 <div class="filters">
 <input id="search" type="search" data-en-placeholder="Search name or phone" data-ar-placeholder="ابحث بالاسم أو الرقم" aria-label="Search name or phone">
 <select id="filter" aria-label="Filter by request type"><option value="all" data-en="All requests" data-ar="كل الطلبات"></option><option value="Space request" data-en="Space requests" data-ar="طلبات المساحات"></option><option value="Pet show" data-en="Pet show requests" data-ar="طلبات عروض الحيوانات"></option></select>
+<select id="contractFilter" aria-label="Contract progress"><option value="all" data-en="All contract stages" data-ar="كل مراحل العقود"></option><option value="Not started" data-en="Contract not started" data-ar="العقد لم يبدأ"></option><option value="Preparing" data-en="Preparing contract" data-ar="تجهيز العقد"></option><option value="Sent" data-en="Contract sent" data-ar="تم إرسال العقد"></option><option value="Signed" data-en="Contract signed" data-ar="تم توقيع العقد"></option></select>
 <button id="download" class="btn" type="button" data-en="Export CSV" data-ar="تصدير CSV"></button>
 </div>
+<div id="statusOverview" class="status-overview" aria-label="Application status filters"></div>
 <p id="count" class="count" aria-live="polite"></p>
 <div id="list" class="cards" aria-live="polite"></div>
-<p class="bottom" data-en="A production version will use authenticated admin access, secure database storage and notifications to info@pawapp.net. This demo does not sync across devices." data-ar="النسخة الرسمية راح تحتاج دخول أدمن محمي وقاعدة بيانات وإشعارات إلى info@pawapp.net. هذي التجربة لا تتزامن بين الأجهزة."></p>
+<p class="bottom" data-en="A production version will use authenticated admin access, secure database storage and notifications to info@pawapp.net. This demo does not sync across devices or send messages automatically." data-ar="النسخة الرسمية راح تحتاج دخول أدمن محمي وقاعدة بيانات وإشعارات إلى info@pawapp.net. هذي التجربة لا تتزامن بين الأجهزة."></p>
 </main>
 <script>
 (function(){"use strict";
@@ -82,15 +84,109 @@ function put(node,tag,cls,value){var el=document.createElement(tag);if(cls)el.cl
 function labels(){document.documentElement.lang=lang;document.documentElement.dir=lang==="ar"?"rtl":"ltr";$("lang").textContent=lang==="ar"?"English":"العربية";document.querySelectorAll("[data-en][data-ar]").forEach(function(e){e.textContent=e.getAttribute("data-"+lang)});$("search").placeholder=$("search").getAttribute("data-"+lang+"-placeholder");document.title=tr("PawPark — Request Inbox Demo","باو بارك — تجربة صندوق الطلبات")}
 function itemField(parent,en,ar,value){if(value===undefined||value===null||value==="")return;var wrap=put(parent,"div","field");put(wrap,"span","",tr(en,ar));put(wrap,"b","",value)}
 function phoneHref(v){return "tel:"+String(v||"").replace(/[^+0-9]/g,"")}
-function contactButtons(parent,row){var b=put(parent,"div","actions");
-if(row.phone){var a=put(b,"a","btn alt",tr("☎ Call","☎ اتصال"));a.href=phoneHref(row.phone)}
-if(row.email){var m=put(b,"a","btn",tr("✉ Email","✉ إيميل"));m.href="mailto:"+encodeURIComponent(String(row.email)).replace(/%40/g,"@")}
+
+var states=["New","Under Review","Approved","Rejected","Waitlisted"];
+var statesAr=["جديد","قيد المراجعة","موافق عليه","مرفوض","قائمة الانتظار"];
+var contractStates=["Not started","Preparing","Sent","Signed"];
+var contractAr=["لم يبدأ","تجهيز العقد","تم إرسال العقد","تم توقيع العقد"];
+var selectedStatus="all";
+function stateOf(row){return states.includes(row.status)?row.status:"New"}
+function nameOfStatus(s){var i=states.indexOf(s);return i<0?String(s||""):tr(states[i],statesAr[i])}
+function savePartial(id,values){var all=load();var target=all.find(function(v){return v.id===id});if(!target)return;Object.assign(target,values);save(all)}
+function normalPhone(v){
+ var digits=String(v||"").replace(/[^0-9+]/g,"");
+ if(digits.startsWith("00"))digits=digits.slice(2);
+ if(digits.startsWith("+"))digits=digits.slice(1);
+ if(/^[0-9]{8}$/.test(digits))digits="965"+digits;
+ if(!/^[0-9]{8,15}$/.test(digits))return "";
+ return digits;
 }
+function isEmail(v){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v||"").trim())}
+function subjectOf(row,status,language){
+ var kind=row.type==="Pet show"?(language==="ar"?"تسجيل عرض الحيوانات":"Pet Show Registration"):(language==="ar"?"طلب المشاركة والمساحة":"Space Request");
+ return (language==="ar"?"باو بارك 2027 | ":"PawPark 2027 | ")+kind+" | "+(row.id||"")+
+ (language==="ar"?" | تحديث الطلب":" | Application Update");
+}
+function templateOf(row,status,language){
+ var isAr=language==="ar",pet=row.type==="Pet show";
+ var n=String(row.contact||row.owner||row.brand||"").trim();
+ var request=row.id||"";
+ var particulars=pet
+   ?(isAr?"العرض: ":"Show: ")+(row.show||"")+" \n"+(isAr?"اسم الحيوان: ":"Pet: ")+(row.pet||"")
+   :(isAr?"النشاط: ":"Business: ")+(row.brand||"")+"\n"+(isAr?"المساحة المطلوبة: ":"Requested space: ")+(row.space||"")+"\n"+(isAr?"المنطقة المفضلة: ":"Preferred zone: ")+(row.zone||"");
+ var introAr="مرحبًا "+(n||"") +"،";
+ var introEn="Hello "+(n||"")+",";
+ var messageAr={
+  "New":"شكرًا لتقديم طلبك للمشاركة في فعالية باو بارك 2027. تم استلام طلبك المبدئي، وسيتواصل معك الفريق بعد المراجعة.",
+  "Under Review":"نشكرك على اهتمامك بالمشاركة في باو بارك 2027. نود إبلاغك أن طلبك الآن قيد المراجعة، وسنوافيك بالمستجدات لاحقًا.",
+  "Approved":pet?"يسعدنا إبلاغك بالموافقة المبدئية على طلب المشاركة في عرض الحيوانات بفعالية باو بارك 2027. سيتواصل معك الفريق لتأكيد التفاصيل والمتطلبات النهائية.":"يسعدنا إبلاغك بالموافقة المبدئية على طلب مشاركة نشاطك في باو بارك 2027. سيتواصل معك فريقنا لاستكمال تفاصيل المشاركة والعقد. لا تُعد المساحة أو الموقع مؤكدين حتى اكتمال الاتفاقية واعتماد التفاصيل.",
+  "Rejected":"نشكرك على اهتمامك بالمشاركة في باو بارك 2027. بعد مراجعة الطلب، نعتذر عن عدم إمكانية قبول المشاركة في هذه الدورة. نقدّر اهتمامك ونتمنى لك التوفيق.",
+  "Waitlisted":"شكرًا لاهتمامك بالمشاركة في باو بارك 2027. تم إدراج طلبك في قائمة الانتظار، وسنتواصل معك عند توفر فرصة مناسبة. لا يعني الإدراج تأكيد المشاركة."
+ };
+ var messageEn={
+  "New":"Thank you for applying to take part in PawPark 2027. We have received your request and will contact you after review.",
+  "Under Review":"Thank you for your interest in PawPark 2027. Your application is currently under review. We will contact you with updates.",
+  "Approved":pet?"We are pleased to inform you that your PawPark 2027 pet show application has received preliminary approval. Our team will contact you to confirm the final details and requirements.":"We are pleased to inform you that your PawPark 2027 space request has received preliminary approval. Our team will contact you regarding participation details and the agreement. The space and final location are not confirmed until the agreement and details are finalized.",
+  "Rejected":"Thank you for your interest in PawPark 2027. After reviewing your application, we regret that we cannot offer participation at this event. We appreciate your interest and wish you all the best.",
+  "Waitlisted":"Thank you for your interest in PawPark 2027. Your request has been placed on our waiting list, and we will contact you if a suitable opportunity becomes available. This is not a confirmed participation."
+ };
+ return (isAr?introAr:introEn)+"\n\n"+(isAr?messageAr[status]:messageEn[status])+"\n\n"+
+ (isAr?"رقم الطلب: ":"Reference: ")+request+"\n"+particulars+
+ "\n\n"+(isAr?"مع التحية،\nفريق باو بارك بالتعاون مع باو أب\ninfo@pawapp.net":"Kind regards,\nPawPark Team in collaboration with PawApp\ninfo@pawapp.net");
+}
+function contactButtons(parent,row){
+ var status=stateOf(row),messageLang=row.messageLang==="en"?"en":"ar";
+ var box=put(parent,"section","reply-tools");
+ var title=put(box,"div","reply-title");
+ put(title,"h4","",tr("Reply to applicant","الرد على مقدم الطلب"));
+ put(title,"span","tag",tr("Ready-to-edit draft","رسالة جاهزة للتعديل"));
+ var controls=put(box,"div","reply-controls"),langLabel=put(controls,"label","");
+ put(langLabel,"span","",tr("Message language","لغة الرسالة"));
+ var languageSelect=put(langLabel,"select","");
+ [["ar","العربية"],["en","English"]].forEach(function(v){var opt=put(languageSelect,"option","",v[1]);opt.value=v[0]});
+ languageSelect.value=messageLang;
+ var reset=put(controls,"button","btn small",tr("Reset template","استعادة النص الافتراضي"));
+ reset.type="button";
+ var subjectBox=put(box,"div","subject");
+ var text=put(box,"textarea","");
+ text.setAttribute("aria-label",tr("Editable reply message","نص الرسالة قابل للتعديل"));
+ text.dir=messageLang==="ar"?"rtl":"ltr";
+ var validDraft=row.draftStatus===status&&row.draftLanguage===messageLang;
+ text.value=validDraft&&row.draftMessage!==undefined?row.draftMessage:templateOf(row,status,messageLang);
+ var subject=subjectOf(row,status,messageLang);
+ subjectBox.textContent=tr("Subject: ","الموضوع: ")+subject;
+ var actions=put(box,"div","actions");
+ var email=put(actions,"a","btn email",tr("✉ Email draft","✉ رسالة إيميل"));
+ var wa=put(actions,"a","btn whatsapp",tr("💬 WhatsApp draft","💬 رسالة واتساب"));
+ var copy=put(actions,"button","btn copy",tr("Copy message","نسخ الرسالة"));copy.type="button";
+ function sync(){
+   var body=text.value;
+   var address=String(row.email||"").trim();
+   if(isEmail(address)){email.href="mailto:"+encodeURIComponent(address)+"?subject="+encodeURIComponent(subject)+"&body="+encodeURIComponent(body);email.removeAttribute("aria-disabled");email.removeAttribute("tabindex");}
+   else {email.removeAttribute("href");email.setAttribute("aria-disabled","true");email.setAttribute("tabindex","-1");}
+   var phone=normalPhone(row.phone);
+   if(phone){wa.href="https://wa.me/"+phone+"?text="+encodeURIComponent(body);wa.target="_blank";wa.rel="noopener noreferrer";wa.removeAttribute("aria-disabled");wa.removeAttribute("tabindex");}
+   else{wa.removeAttribute("href");wa.setAttribute("aria-disabled","true");wa.setAttribute("tabindex","-1");}
+ }
+ sync();
+ text.addEventListener("input",function(){savePartial(row.id,{draftMessage:text.value,draftStatus:status,draftLanguage:messageLang,messageLang:messageLang});sync()});
+ languageSelect.addEventListener("change",function(){messageLang=languageSelect.value;text.dir=messageLang==="ar"?"rtl":"ltr";text.value=templateOf(row,status,messageLang);subject=subjectOf(row,status,messageLang);subjectBox.textContent=tr("Subject: ","الموضوع: ")+subject;savePartial(row.id,{messageLang:messageLang,draftMessage:text.value,draftStatus:status,draftLanguage:messageLang});sync()});
+ reset.addEventListener("click",function(){text.value=templateOf(row,status,messageLang);savePartial(row.id,{draftMessage:text.value,draftStatus:status,draftLanguage:messageLang});sync()});
+ copy.addEventListener("click",function(){if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text.value).then(function(){copy.textContent=tr("Copied","تم النسخ")}).catch(function(){text.select()})}else{text.select()}});
+ var hint=put(box,"p","advice",tr("Email and WhatsApp open an editable draft. You must press Send inside that app. Opening a draft does not prove it was delivered.","الإيميل والواتساب يفتحون رسالة جاهزة قابلة للتعديل. إنتِ تضغطين إرسال داخل التطبيق؛ فتح الرسالة لا يعني أنها انرسلت."));
+ if(!isEmail(row.email)||!normalPhone(row.phone))put(box,"p","advice warn",tr("A missing or invalid email/phone disables that channel.","إذا الإيميل أو الرقم غير صحيح راح يتعطل زر القناة المعنية."));
+ var lifecycle=put(box,"div","lifecycle");
+ var mark=put(lifecycle,"button","btn small",row.contactedAt?tr("Contact recorded ✓","تم تسجيل التواصل ✓"):tr("Mark as contacted (manually)","تسجيل التواصل يدويًا"));
+ mark.type="button";
+ mark.addEventListener("click",function(){var at=new Date().toISOString();savePartial(row.id,{contactedAt:at});mark.textContent=tr("Contact recorded ✓","تم تسجيل التواصل ✓")});
+ put(lifecycle,"div","save-note",row.contactedAt?tr("Contact marked manually: ","تم تسجيل التواصل يدويًا: ")+new Date(row.contactedAt).toLocaleString(lang==="ar"?"ar-KW":"en-GB"):tr("Only click after you have actually contacted the applicant. This does not confirm delivery.","اضغطي بعد ما تتواصلين فعليًا مع العميل. هذا لا يؤكد وصول الرسالة."));
+}
+
 function newCard(container,row,idx){var card=put(container,"article","request"),head=put(card,"div","request-head"),name=put(head,"div","");
 put(name,"h3","",row.brand||row.owner||tr("Unnamed request","طلب بدون اسم"));
 var date="";try{date=row.date?new Date(row.date).toLocaleString(lang==="ar"?"ar-KW":"en-GB"):""}catch(e){}
 put(name,"div","meta",(row.id||"DEMO")+" · "+date+" · "+(row.type==="Pet show"?tr("Pet show","عرض حيوانات"):tr("Book Your Space","طلب مساحة")));
-put(head,"span","tag",row.status&&row.status!=="Demo - not submitted"?row.status:tr("New · Demo","جديد · تجريبي"));
+put(head,"span","tag",nameOfStatus(stateOf(row))+tr(" · Demo"," · تجريبي"));
 var data=put(card,"div","fields");
 if(row.type==="Space request"){
 itemField(data,"Contact person","اسم المسؤول",row.contact);itemField(data,"Mobile / WhatsApp","رقم الهاتف",row.phone);
@@ -102,29 +198,49 @@ itemField(data,"Email","البريد الإلكتروني",row.email);itemField(
 itemField(data,"Pet's name","اسم الحيوان",row.pet);itemField(data,"Pet type","نوع الحيوان",row.species);
 itemField(data,"Breed","السلالة",row.breed);itemField(data,"Age","العمر",row.age);
 }
-contactButtons(card,row);
 var manage=put(card,"div","manage"),sw=put(manage,"label","status-wrap");
 put(sw,"span","",tr("Status (demo only)","الحالة (تجريبي)"));
 var select=put(sw,"select","");
-var states=["New","Under Review","Approved","Rejected","Waitlisted"],statesAr=["جديد","قيد المراجعة","موافق عليه","مرفوض","قائمة الانتظار"];
 states.forEach(function(s,i){var opt=document.createElement("option");opt.value=s;opt.textContent=tr(s,statesAr[i]);select.appendChild(opt)});
 select.value=states.indexOf(row.status)>=0?row.status:"New";
-select.addEventListener("change",function(){var all=load(),target=all.find(function(v){return v.id===row.id});if(target){target.status=select.value;save(all)}render()});
+select.addEventListener("change",function(){savePartial(row.id,{status:select.value,draftMessage:"",draftStatus:"",draftLanguage:""});render()});
 var nw=put(manage,"label","notes-wrap");put(nw,"span","",tr("Internal notes (demo only)","ملاحظات داخلية (تجريبية)"));
-var ta=put(nw,"textarea","");ta.placeholder=tr("Notes for follow-up","ملاحظات المتابعة");ta.value=row.notes||"";ta.addEventListener("change",function(){var all=load(),target=all.find(function(v){return v.id===row.id});if(target){target.notes=ta.value;save(all)}});
+var ta=put(nw,"textarea","");ta.placeholder=tr("Notes for follow-up","ملاحظات المتابعة");ta.value=row.notes||"";ta.addEventListener("change",function(){savePartial(row.id,{notes:ta.value})});
+if(row.type==="Space request"){
+ var cw=put(manage,"label","status-wrap");
+ put(cw,"span","",tr("Contract progress (demo)","مرحلة العقد (تجريبي)"));
+ var contract=put(cw,"select","");
+ contractStates.forEach(function(s,i){var opt=put(contract,"option","",tr(s,contractAr[i]));opt.value=s});
+ contract.value=contractStates.includes(row.contractStage)?row.contractStage:"Not started";
+ contract.addEventListener("change",function(){savePartial(row.id,{contractStage:contract.value});render()});
+}
+contactButtons(card,row);
 }
 function render(){try{
 var rows=load(),search=$("search").value.trim().toLowerCase(),filter=$("filter").value;
 $("total").textContent=rows.length;$("spaces").textContent=rows.filter(function(x){return x.type==="Space request"}).length;$("pets").textContent=rows.filter(function(x){return x.type==="Pet show"}).length;
-var filtered=rows.filter(function(x){return(filter==="all"||x.type===filter)&&(!search||Object.keys(x).some(function(k){return String(x[k]||"").toLowerCase().includes(search)}))});
+var contractFilter=$("contractFilter").value;
+var filtered=rows.filter(function(x){return(filter==="all"||x.type===filter)&&
+ (selectedStatus==="all"||stateOf(x)===selectedStatus)&&
+ (contractFilter==="all"||(x.type==="Space request"&&(x.contractStage||"Not started")===contractFilter))&&
+ (!search||Object.keys(x).some(function(k){return String(x[k]||"").toLowerCase().includes(search)}))});
+var ov=$("statusOverview");while(ov.firstChild)ov.removeChild(ov.firstChild);
+var statuses=["all"].concat(states);
+statuses.forEach(function(status){
+ var count=rows.filter(function(x){return status==="all"||stateOf(x)===status}).length;
+ var name=status==="all"?tr("All","الكل"):nameOfStatus(status);
+ var btn=put(ov,"button","btn"+(selectedStatus===status?" active":""),name+" · "+count);
+ btn.type="button";btn.setAttribute("aria-pressed",String(selectedStatus===status));
+ btn.addEventListener("click",function(){selectedStatus=status;render()});
+});
 $("count").textContent=tr("Showing ","المعروض: ")+filtered.length+tr(" request(s)"," طلب");
 var list=$("list");while(list.firstChild)list.removeChild(list.firstChild);
 if(!filtered.length){put(list,"div","empty",tr("No matching demo requests on this device yet. Submit a test request from the visitor website.","ما في طلبات تجريبية مطابقة على هالجهاز. جرّبي إرسال طلب من موقع الزوار."));return}
 filtered.forEach(function(row,i){newCard(list,row,i)});
 }catch(error){$("list").textContent=tr("Could not display requests. Try refreshing this page.","تعذر عرض الطلبات. جرّبي تحديث الصفحة.");}}
 $("lang").addEventListener("click",function(){lang=lang==="en"?"ar":"en";labels();render()});
-$("search").addEventListener("input",render);$("filter").addEventListener("change",render);
-$("download").addEventListener("click",function(){var rows=load();if(!rows.length)return;var keys=["id","date","type","brand","contact","owner","phone","email","space","zone","custom","show","pet","species","breed","age","status","notes"];
+$("search").addEventListener("input",render);$("filter").addEventListener("change",render);$("contractFilter").addEventListener("change",render);
+$("download").addEventListener("click",function(){var rows=load();if(!rows.length)return;var keys=["id","date","type","brand","contact","owner","phone","email","space","zone","custom","show","pet","species","breed","age","status","contractStage","notes","contactedAt","messageLang"];
 var quote=function(v){return '"'+String(v==null?"":v).replace(/"/g,'""')+'"'};
 var csv=[keys.join(",")].concat(rows.map(function(r){return keys.map(function(k){return quote(r[k])}).join(",")})).join("\r\n");
 var b=new Blob(["\uFEFF",csv],{type:"text/csv;charset=utf-8"}),url=URL.createObjectURL(b),a=document.createElement("a");
