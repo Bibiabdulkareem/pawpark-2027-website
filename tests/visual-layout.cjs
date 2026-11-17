@@ -33,6 +33,19 @@ const path=require('node:path');
       assert.equal(metrics.missingImages.length,0,'Photo / logo failed to load');
       assert.ok(metrics.scrollWidth<=width+2,'Horizontal overflow at '+width+': '+JSON.stringify(metrics));
       for(const k of ['hero','heroPhoto','zones','form','show','contact']) assert.ok(metrics[k]?.visible,'Missing element: '+k+' at '+width);
+      const ribbons=await page.evaluate(()=>{
+        const info=(first,second)=>{
+          const e=document.querySelector(first),n=document.querySelector(second);
+          const p=getComputedStyle(e,'::before'),r=e.getBoundingClientRect(),nr=n.getBoundingClientRect();
+          return {text:e.textContent,pseudo:p.content,right:r.right+Math.abs(parseFloat(p.right)||0),nextLeft:nr.left};
+        };
+        return {zones:info('.zones .title-band .band','.zones .title-band>span:last-child'),
+          booking:info('.booking-title .book-title-keyword','.booking-title .book-title-rest')};
+      });
+      for(const [name,ribbon] of Object.entries(ribbons)){
+        assert.ok(ribbon.pseudo!=='none',name+' highlight missing');
+        assert.ok(ribbon.right<ribbon.nextLeft,name+' ribbon overlaps next word at '+width+': '+JSON.stringify(ribbon));
+      }
       if(width===390||width===1366)await page.screenshot({path:path.join('test-results','pawpark-'+width+'.png'),fullPage:true,animations:'disabled'});
       console.log('PASS Canva visual geometry',width,JSON.stringify(metrics));
       await ctx.close();
