@@ -1,0 +1,49 @@
+name: Import original PawPark photos into repository
+on:
+  push:
+    paths:
+      - .github/workflows/import-original-photos.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  import:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Fetch original uploaded images
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p assets
+          curl -fLSs --retry 3 --connect-timeout 20 --max-time 90 "https://videocdn.pollo.ai/web-cdn/pollo/production/cmvj3jh1d099m2besfitkgcqy/image/1794933633733-2d05596c-f03a-4481-8a54-1d83c78afa58.jpg" -o "assets/hero-pomeranian.jpg"
+          test "$(wc -c < "assets/hero-pomeranian.jpg")" -gt 10000
+          curl -fLSs --retry 3 --connect-timeout 20 --max-time 90 "https://videocdn.pollo.ai/web-cdn/pollo/production/cmvj3jh1d099m2besfitkgcqy/image/1794933637053-c7e316cf-d356-4ca2-9b28-d57d51455af1.jpg" -o "assets/kids-zone.jpg"
+          test "$(wc -c < "assets/kids-zone.jpg")" -gt 10000
+          curl -fLSs --retry 3 --connect-timeout 20 --max-time 90 "https://videocdn.pollo.ai/web-cdn/pollo/production/cmvj3jh1d099m2besfitkgcqy/image/1794933639907-2a2db850-239b-4509-88c9-369006f27cc2.jpg" -o "assets/pets-zone.jpg"
+          test "$(wc -c < "assets/pets-zone.jpg")" -gt 10000
+          curl -fLSs --retry 3 --connect-timeout 20 --max-time 90 "https://videocdn.pollo.ai/web-cdn/pollo/production/cmvj3jh1d099m2besfitkgcqy/image/1794933643675-234adad0-1816-497d-b753-dea0c54210ba.jpg" -o "assets/food-zone.jpg"
+          test "$(wc -c < "assets/food-zone.jpg")" -gt 10000
+          curl -fLSs --retry 3 --connect-timeout 20 --max-time 90 "https://videocdn.pollo.ai/web-cdn/pollo/production/cmvj3jh1d099m2besfitkgcqy/image/1794933562724-60e60115-316e-4ea6-a7db-a27bddf11e3c.jpg" -o "assets/booking-collage.jpg"
+          test "$(wc -c < "assets/booking-collage.jpg")" -gt 10000
+          curl -fLSs --retry 3 --connect-timeout 20 --max-time 90 "https://videocdn.pollo.ai/web-cdn/pollo/production/cmvj3jh1d099m2besfitkgcqy/image/1794933646420-01db6823-72bb-46ec-a880-3e2e40c9dbd8.jpg" -o "assets/pet-show-poodle.jpg"
+          test "$(wc -c < "assets/pet-show-poodle.jpg")" -gt 10000
+          curl -fLSs --retry 3 --connect-timeout 20 --max-time 90 "https://videocdn.pollo.ai/web-cdn/pollo/production/cmvj3jh1d099m2besfitkgcqy/image/1794933649267-d6c54738-6d8c-4c67-af6c-7201e8729533.jpg" -o "assets/contact-dog.jpg"
+          test "$(wc -c < "assets/contact-dog.jpg")" -gt 10000
+          curl -fLSs --retry 3 --connect-timeout 20 --max-time 90 "https://videocdn.pollo.ai/web-cdn/pollo/production/cmvj3jh1d099m2besfitkgcqy/image/1794933708864-f271f8da-6e5c-49fd-a42e-98985d0d5940.jpg" -o "assets/pawapp-logo.jpg"
+          test "$(wc -c < "assets/pawapp-logo.jpg")" -gt 10000
+          file assets/*.jpg
+      - name: Commit assets to website
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/*.jpg
+          if ! git diff --cached --quiet; then
+            git commit -m "Add original PawPark photos and PawApp logo for website"
+            git push origin HEAD:main
+          fi
