@@ -1,19 +1,135 @@
-<!doctype html><html lang="en" dir="ltr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PawPark 2027 — Admin Demo</title><style>
-:root{--blue:#003e8e;--cream:#f6f6e9;--beige:#eddeae;--yellow:#f2df68}*{box-sizing:border-box}body{margin:0;background:var(--cream);color:#07336c;font:15px/1.5 Arial,Tahoma,sans-serif}button,input,select{font:inherit}button{cursor:pointer}header{background:var(--blue);color:white;padding:24px 20px}main{max-width:1060px;margin:auto;padding:27px 18px 60px}.top{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}.top h1{margin:0;font-size:clamp(23px,4vw,34px)}.btn{border:0;border-radius:10px;background:var(--beige);color:var(--blue);padding:10px 15px;font-weight:bold;text-decoration:none}.note{background:#fff0b2;color:#604000;padding:14px 17px;border:2px solid #edd57b;border-radius:12px;margin:25px 0;font-weight:650}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.stat{background:white;border-radius:14px;padding:18px}.stat b{font-size:27px;display:block}.controls{display:flex;flex-wrap:wrap;gap:10px;margin:24px 0}.controls input,.controls select{min-height:44px;padding:9px;border:1px solid #b4c5d1;border-radius:8px;background:white;color:var(--blue)}.controls input{flex:1;min-width:150px}.list{display:grid;gap:13px}.entry{background:white;border:1px solid #d7d8d6;border-radius:15px;padding:18px}.entry-head{display:flex;justify-content:space-between;gap:12px;align-items:start;flex-wrap:wrap}.entry h3{margin:0;font-size:18px}.entry small{color:#5c6d7b}.kv{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:14px 0}.kv div{overflow-wrap:anywhere}.kv strong{display:block;color:#294e7d;font-size:12px}.badge{border-radius:18px;padding:5px 10px;background:#edf4ff;color:var(--blue);font-size:12px;font-weight:bold}.empty{padding:30px;background:#fff;text-align:center;border-radius:14px}.link{color:#fff;text-decoration:underline}.actions{display:flex;gap:10px;flex-wrap:wrap}footer{text-align:center;margin:30px;color:#586982}@media(max-width:620px){.stats{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.stat{padding:11px}.stat b{font-size:21px}.kv{grid-template-columns:1fr}}
-</style></head><body>
-<header><div class="top" style="max-width:1060px;margin:auto"><h1 data-en="PawPark · Admin Preview" data-ar="باو بارك · معاينة لوحة الإدارة"></h1><div class="actions"><button id="lang" class="btn">العربية</button><a class="link" href="index.html" data-en="← Visitor website" data-ar="← موقع الزوار"></a></div></div></header>
-<main><div class="note" data-en="DEMO ONLY: This is not an authenticated admin system. Demo requests are saved only in this browser on this device. Other visitors cannot see your device's local data. DO NOT enter real customer data until secure backend and admin sign-in are configured." data-ar="تجربة فقط: هذه ليست لوحة إدارة محمية بتسجيل دخول. طلبات التجربة محفوظة داخل هذا المتصفح على نفس الجهاز فقط؛ زوار الأجهزة الأخرى لا يشوفون بيانات جهازك. لا تدخل بيانات عملاء حقيقية قبل إعداد قاعدة بيانات آمنة ودخول خاص للأدمن."></div>
-<div class="stats"><div class="stat"><b id="total">0</b><span data-en="Demo requests" data-ar="طلبات تجريبية"></span></div><div class="stat"><b id="spaces">0</b><span data-en="Space requests" data-ar="طلبات المساحات"></span></div><div class="stat"><b id="pets">0</b><span data-en="Pet show requests" data-ar="طلبات عروض الحيوانات"></span></div></div>
-<div class="controls"><input id="search" type="search" data-ph-en="Search name or phone" data-ph-ar="ابحث بالاسم أو الرقم"><select id="filter"><option value="all" data-en="All requests" data-ar="كل الطلبات"></option><option value="Space request" data-en="Space requests" data-ar="طلبات المساحة"></option><option value="Pet show" data-en="Pet show requests" data-ar="طلبات عروض الحيوانات"></option></select><button class="btn" id="download" type="button" data-en="Export demo CSV" data-ar="تنزيل CSV تجريبي"></button></div>
-<div class="list" id="list" aria-live="polite"></div>
-<footer data-en="This preview does not sync across devices, send emails, or replace the future secure admin dashboard." data-ar="هذه المعاينة لا تتزامن بين الأجهزة ولا ترسل إيميلات ولا تغني عن لوحة الإدارة الآمنة لاحقًا."></footer>
-</main><script>
-(()=>{"use strict";let lang="en";const $=id=>document.getElementById(id),val=id=>($(id).value||"").trim();function safe(){try{let d=JSON.parse(localStorage.getItem("pawpark_demo_requests")||"[]");return Array.isArray(d)?d:[]}catch(e){return []}}
-function t(en,ar){return lang==="ar"?ar:en}function language(){document.documentElement.lang=lang;document.documentElement.dir=lang==="ar"?"rtl":"ltr";$("lang").textContent=lang==="ar"?"English":"العربية";document.querySelectorAll("[data-en][data-ar]").forEach(x=>{x.textContent=x.dataset[lang]});$("search").placeholder=lang==="ar"?$("search").dataset.phAr:$("search").dataset.phEn;render()}
-$("lang").addEventListener("click",()=>{lang=lang==="en"?"ar":"en";language()});$("filter").addEventListener("change",render);$("search").addEventListener("input",render);
-function render(){let all=safe();$("total").textContent=all.length;$("spaces").textContent=all.filter(x=>x.type==="Space request").length;$("pets").textContent=all.filter(x=>x.type==="Pet show").length;let f=val("filter"),q=val("search").toLowerCase(),items=all.filter(x=>(f==="all"||x.type===f)&&(!q||JSON.stringify(x).toLowerCase().includes(q)));$("list").replaceChildren();if(!items.length){let p=document.createElement("div");p.className="empty";p.textContent=t("No demo requests on this device yet. Submit a test request on the visitor page and return here.","لا توجد طلبات تجريبية على هذا الجهاز. قدّم طلبًا تجريبيًا من صفحة الزوار وارجع هنا.");$("list").append(p);return}
-for(let row of items){let card=document.createElement("article");card.className="entry",head=document.createElement("div");head.className="entry-head";let box=document.createElement("div"),h=document.createElement("h3");h.textContent=row.brand||row.owner||"(No name)";let small=document.createElement("small");small.textContent=(row.id||"")+" · "+(row.date?new Date(row.date).toLocaleString(lang==="ar"?"ar-KW":"en-GB"):"");box.append(h,small);let status=document.createElement("span");status.className="badge";status.textContent=t("DEMO ONLY","تجريبي فقط");head.append(box,status);card.append(head);let kv=document.createElement("div");kv.className="kv";for(let [k,v] of Object.entries(row)){if(["id","date"].includes(k)||v==null||typeof v==="object"||v==="")continue;let d=document.createElement("div"),label=document.createElement("strong");label.textContent=k.replace(/([A-Z])/g," $1");d.append(label,document.createTextNode(String(v)));kv.append(d)}card.append(kv);$("list").append(card)}
+<!doctype html>
+<html lang="en" dir="ltr"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#003e8e">
+<title>PawPark — Requests Demo</title>
+<style>
+:root{--blue:#003e8e;--cream:#f6f6e9;--beige:#eddeae;--yellow:#f2df68;--ink:#0b2b5d}
+*{box-sizing:border-box}html,body{margin:0;max-width:100%;overflow-x:clip}
+body{background:var(--cream);color:var(--ink);font:15px/1.5 Arial,"Segoe UI",Tahoma,sans-serif}
+button,input,select,textarea{font:inherit}button{cursor:pointer}
+header{background:var(--blue);color:white;padding:18px 0}
+.wrap{width:min(1080px,calc(100% - 30px));margin:auto}
+.top{display:flex;gap:15px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+h1{margin:0;font-size:clamp(21px,4vw,33px)}
+a{color:inherit}a:hover{text-decoration:underline}
+.nav-actions{display:flex;align-items:center;gap:11px}
+.nav-actions a{font-size:13px}
+.btn{background:var(--beige);border:0;border-radius:10px;color:var(--blue);padding:11px 14px;font-weight:800;text-decoration:none}
+.btn.alt{background:var(--blue);color:white}
+main{padding:25px 0 65px}
+.note{padding:12px 14px;border-left:4px solid #d7b43d;background:#ffefb7;color:#5d4500;border-radius:6px;font-size:13px;margin:0 0 22px}
+.topline{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 12px}
+.topline h2{margin:0;font-size:clamp(20px,4vw,29px)}
+.topline small{color:#576a80}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:18px}
+.stat{background:#fff;border-radius:12px;padding:15px;border:1px solid #e3e1d5}
+.stat strong{display:block;font-size:28px;line-height:1.2}
+.stat span{display:block;font-size:13px;color:#455a75}
+.filters{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:18px}
+.filters input,.filters select{min-height:46px;background:white;border:1.5px solid #bcc7d4;border-radius:8px;padding:10px;min-width:0;color:var(--blue);font-size:15px}
+.filters input{flex:1;min-width:180px}.filters select{min-width:140px}
+.count{font-size:13px;color:#48627a;margin:0 0 13px}
+.cards{display:grid;gap:15px;min-width:0}
+.request{background:white;border-radius:15px;border:1px solid #d8dedc;padding:18px;min-width:0;box-shadow:0 2px 8px rgba(0,36,70,.04)}
+.request-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;padding-bottom:13px;border-bottom:1px solid #e5e5de}
+.request h3{margin:0;font-size:20px;color:var(--blue);overflow-wrap:anywhere}
+.meta{font-size:12px;color:#60728b;margin:5px 0 0;overflow-wrap:anywhere}
+.tag{border-radius:22px;padding:6px 11px;font-size:12px;font-weight:800;background:#e9f0ff;color:var(--blue);white-space:nowrap}
+.fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px;padding:17px 0}
+.field{min-width:0;overflow-wrap:anywhere}
+.field span{color:#657589;font-size:12px;display:block;margin-bottom:4px}
+.field b{font-size:15px;word-break:break-word}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin:3px 0 18px}
+.actions .btn{font-size:13px;display:inline-flex;align-items:center}
+.manage{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap;border-top:1px solid #e5e5de;padding-top:15px}
+.manage label{font-size:12px;font-weight:800;color:var(--blue)}
+.manage select,.manage textarea{display:block;margin-top:6px;padding:8px 10px;background:#f9f9f5;border:1px solid #d3d8da;border-radius:7px;min-width:0;width:100%;color:var(--blue);font-size:14px}
+.manage .status-wrap{min-width:180px;flex:0 1 200px}
+.manage .notes-wrap{min-width:220px;flex:1}
+.manage textarea{resize:vertical;height:55px}
+.empty{background:white;border-radius:13px;padding:35px 20px;text-align:center;color:#596a7e}
+.alert{color:#ac2828;padding:14px;background:white;border-radius:10px}
+.bottom{margin-top:27px;font-size:12px;color:#587087}
+@media(max-width:680px){.wrap{width:calc(100% - 24px)}.top h1{font-size:21px}.nav-actions{gap:7px}.nav-actions a{font-size:11px}.nav-actions .btn{padding:8px;font-size:12px}.stats{gap:6px}.stat{padding:12px 9px}.stat strong{font-size:23px}.stat span{font-size:10px}.filters input{min-width:130px}.filters select{flex:1;min-width:130px}.filters .btn{flex:1}.request{padding:14px}.request h3{font-size:18px}.fields{grid-template-columns:1fr 1fr;gap:12px}.field b{font-size:13px}.actions .btn{flex:1;justify-content:center}.manage{display:block}.manage .status-wrap,.manage .notes-wrap{display:block;margin-bottom:13px;width:100%}}
+@media(max-width:350px){.fields{grid-template-columns:1fr}}
+</style></head>
+<body>
+<header><div class="wrap top"><h1 data-en="PawPark · Request Inbox" data-ar="باو بارك · صندوق الطلبات"></h1>
+<div class="nav-actions"><button class="btn" id="lang" type="button">العربية</button><a href="index.html" data-en="Visitor website" data-ar="موقع الزوار"></a></div>
+</div></header>
+<main class="wrap">
+<p class="note" data-en="DEMO ONLY · Requests are saved in this browser on this device. No email is sent, and this page is not a secure admin login yet. Use fictional test information only." data-ar="تجربة فقط · الطلبات محفوظة على هذا المتصفح والجهاز فقط. لا يتم إرسال إيميل، وهذه ليست لوحة إدارة محمية بعد. استخدمي بيانات تجريبية غير حقيقية."></p>
+<div class="topline"><h2 data-en="Incoming requests" data-ar="الطلبات الواردة"></h2><small data-en="Private dashboard design preview" data-ar="معاينة تصميم لوحة الإدارة"></small></div>
+<section class="stats" aria-label="Summary"><div class="stat"><strong id="total">0</strong><span data-en="All demo requests" data-ar="جميع الطلبات"></span></div><div class="stat"><strong id="spaces">0</strong><span data-en="Space requests" data-ar="طلبات المساحات"></span></div><div class="stat"><strong id="pets">0</strong><span data-en="Pet show" data-ar="عروض الحيوانات"></span></div></section>
+<div class="filters">
+<input id="search" type="search" data-en-placeholder="Search name or phone" data-ar-placeholder="ابحث بالاسم أو الرقم" aria-label="Search name or phone">
+<select id="filter" aria-label="Filter by request type"><option value="all" data-en="All requests" data-ar="كل الطلبات"></option><option value="Space request" data-en="Space requests" data-ar="طلبات المساحات"></option><option value="Pet show" data-en="Pet show requests" data-ar="طلبات عروض الحيوانات"></option></select>
+<button id="download" class="btn" type="button" data-en="Export CSV" data-ar="تصدير CSV"></button>
+</div>
+<p id="count" class="count" aria-live="polite"></p>
+<div id="list" class="cards" aria-live="polite"></div>
+<p class="bottom" data-en="A production version will use authenticated admin access, secure database storage and notifications to info@pawapp.net. This demo does not sync across devices." data-ar="النسخة الرسمية راح تحتاج دخول أدمن محمي وقاعدة بيانات وإشعارات إلى info@pawapp.net. هذي التجربة لا تتزامن بين الأجهزة."></p>
+</main>
+<script>
+(function(){"use strict";
+var lang="en";
+function $(id){return document.getElementById(id)}
+function tr(en,ar){return lang==="ar"?ar:en}
+function load(){try{var x=JSON.parse(localStorage.getItem("pawpark_demo_requests")||"[]");return Array.isArray(x)?x.filter(function(v){return v&&typeof v==="object"}):[]}catch(e){return []}}
+function save(rows){try{localStorage.setItem("pawpark_demo_requests",JSON.stringify(rows))}catch(e){}}
+function put(node,tag,cls,value){var el=document.createElement(tag);if(cls)el.className=cls;if(value!==undefined&&value!==null)el.textContent=String(value);node.appendChild(el);return el}
+function labels(){document.documentElement.lang=lang;document.documentElement.dir=lang==="ar"?"rtl":"ltr";$("lang").textContent=lang==="ar"?"English":"العربية";document.querySelectorAll("[data-en][data-ar]").forEach(function(e){e.textContent=e.getAttribute("data-"+lang)});$("search").placeholder=$("search").getAttribute("data-"+lang+"-placeholder");document.title=tr("PawPark — Request Inbox Demo","باو بارك — تجربة صندوق الطلبات")}
+function itemField(parent,en,ar,value){if(value===undefined||value===null||value==="")return;var wrap=put(parent,"div","field");put(wrap,"span","",tr(en,ar));put(wrap,"b","",value)}
+function phoneHref(v){return "tel:"+String(v||"").replace(/[^+0-9]/g,"")}
+function contactButtons(parent,row){var b=put(parent,"div","actions");
+if(row.phone){var a=put(b,"a","btn alt",tr("☎ Call","☎ اتصال"));a.href=phoneHref(row.phone)}
+if(row.email){var m=put(b,"a","btn",tr("✉ Email","✉ إيميل"));m.href="mailto:"+encodeURIComponent(String(row.email)).replace(/%40/g,"@")}
 }
-$("download").addEventListener("click",()=>{let data=safe();if(!data.length)return;let keys=["id","date","type","brand","contact","owner","phone","email","space","zone","custom","show","pet","species","breed","age","status"];let esc=v=>'"'+String(v??"").replace(/"/g,'""')+'"';let csv=[keys.join(","),...data.map(x=>keys.map(k=>esc(x[k])).join(","))].join("\r\n");let blob=new Blob(["\uFEFF",csv],{type:"text/csv;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="pawpark-demo-requests.csv";a.click();setTimeout(()=>URL.revokeObjectURL(url),1200)});
-language()})();
-</script></body></html>
+function newCard(container,row,idx){var card=put(container,"article","request"),head=put(card,"div","request-head"),name=put(head,"div","");
+put(name,"h3","",row.brand||row.owner||tr("Unnamed request","طلب بدون اسم"));
+var date="";try{date=row.date?new Date(row.date).toLocaleString(lang==="ar"?"ar-KW":"en-GB"):""}catch(e){}
+put(name,"div","meta",(row.id||"DEMO")+" · "+date+" · "+(row.type==="Pet show"?tr("Pet show","عرض حيوانات"):tr("Book Your Space","طلب مساحة")));
+put(head,"span","tag",row.status&&row.status!=="Demo - not submitted"?row.status:tr("New · Demo","جديد · تجريبي"));
+var data=put(card,"div","fields");
+if(row.type==="Space request"){
+itemField(data,"Contact person","اسم المسؤول",row.contact);itemField(data,"Mobile / WhatsApp","رقم الهاتف",row.phone);
+itemField(data,"Email","البريد الإلكتروني",row.email);itemField(data,"Space","المساحة",row.space);
+itemField(data,"Zone","المنطقة",row.zone);itemField(data,"Custom requirements","متطلبات خاصة",row.custom);
+}else{
+itemField(data,"Pet owner","اسم المالك",row.owner);itemField(data,"Mobile","رقم الهاتف",row.phone);
+itemField(data,"Email","البريد الإلكتروني",row.email);itemField(data,"Show","نوع العرض",row.show);
+itemField(data,"Pet's name","اسم الحيوان",row.pet);itemField(data,"Pet type","نوع الحيوان",row.species);
+itemField(data,"Breed","السلالة",row.breed);itemField(data,"Age","العمر",row.age);
+}
+contactButtons(card,row);
+var manage=put(card,"div","manage"),sw=put(manage,"label","status-wrap");
+put(sw,"span","",tr("Status (demo only)","الحالة (تجريبي)"));
+var select=put(sw,"select","");
+var states=["New","Under Review","Approved","Rejected","Waitlisted"],statesAr=["جديد","قيد المراجعة","موافق عليه","مرفوض","قائمة الانتظار"];
+states.forEach(function(s,i){var opt=document.createElement("option");opt.value=s;opt.textContent=tr(s,statesAr[i]);select.appendChild(opt)});
+select.value=states.indexOf(row.status)>=0?row.status:"New";
+select.addEventListener("change",function(){var all=load(),target=all.find(function(v){return v.id===row.id});if(target){target.status=select.value;save(all)}render()});
+var nw=put(manage,"label","notes-wrap");put(nw,"span","",tr("Internal notes (demo only)","ملاحظات داخلية (تجريبية)"));
+var ta=put(nw,"textarea","");ta.placeholder=tr("Notes for follow-up","ملاحظات المتابعة");ta.value=row.notes||"";ta.addEventListener("change",function(){var all=load(),target=all.find(function(v){return v.id===row.id});if(target){target.notes=ta.value;save(all)}});
+}
+function render(){try{
+var rows=load(),search=$("search").value.trim().toLowerCase(),filter=$("filter").value;
+$("total").textContent=rows.length;$("spaces").textContent=rows.filter(function(x){return x.type==="Space request"}).length;$("pets").textContent=rows.filter(function(x){return x.type==="Pet show"}).length;
+var filtered=rows.filter(function(x){return(filter==="all"||x.type===filter)&&(!search||Object.keys(x).some(function(k){return String(x[k]||"").toLowerCase().includes(search)}))});
+$("count").textContent=tr("Showing ","المعروض: ")+filtered.length+tr(" request(s)"," طلب");
+var list=$("list");while(list.firstChild)list.removeChild(list.firstChild);
+if(!filtered.length){put(list,"div","empty",tr("No matching demo requests on this device yet. Submit a test request from the visitor website.","ما في طلبات تجريبية مطابقة على هالجهاز. جرّبي إرسال طلب من موقع الزوار."));return}
+filtered.forEach(function(row,i){newCard(list,row,i)});
+}catch(error){$("list").textContent=tr("Could not display requests. Try refreshing this page.","تعذر عرض الطلبات. جرّبي تحديث الصفحة.");}}
+$("lang").addEventListener("click",function(){lang=lang==="en"?"ar":"en";labels();render()});
+$("search").addEventListener("input",render);$("filter").addEventListener("change",render);
+$("download").addEventListener("click",function(){var rows=load();if(!rows.length)return;var keys=["id","date","type","brand","contact","owner","phone","email","space","zone","custom","show","pet","species","breed","age","status","notes"];
+var quote=function(v){return '"'+String(v==null?"":v).replace(/"/g,'""')+'"'};
+var csv=[keys.join(",")].concat(rows.map(function(r){return keys.map(function(k){return quote(r[k])}).join(",")})).join("\r\n");
+var b=new Blob(["\uFEFF",csv],{type:"text/csv;charset=utf-8"}),url=URL.createObjectURL(b),a=document.createElement("a");
+a.href=url;a.download="pawpark-demo-requests.csv";document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url)},1000)});
+labels();render();
+})();
+</script>
+</body></html>
