@@ -25,3 +25,19 @@ jobs:
           npx playwright install --with-deps chromium
       - name: Test database security and bilingual flows in emulators
         run: npx -y firebase-tools@latest emulators:exec --only firestore,auth --project demo-pawpark-2027 --config emulators.json 'npm run test:rules && npm run test:csv && npm test'
+      - name: Check Canva visual geometry on phone, tablet and desktop
+        run: node tests/visual-layout.cjs
+      - name: Save public-page visual QA screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pawpark-canva-public-screenshots
+          path: |
+            test-results/pawpark-*.png
+            index.html
+            site-canva-faithful.css
+            site-fixes.css
+            site-photos.css
+            assets/
+          retention-days: 7
+          if-no-files-found: ignore
