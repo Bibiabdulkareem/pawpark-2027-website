@@ -205,3 +205,12 @@ html[dir=rtl] .show-form{text-align:right}
  .contact .heading{font-size:clamp(42px,10vw,59px)!important}
  .contact-card{font-size:clamp(24px,6vw,33px)}
 }
+
+
+/* Final visual QA corrections: paint the translucent Canva collage above the
+   section background, keep form labels visible, and separate both heading runs. */
+.book-photos{z-index:2!important}
+.booking .form-panel::before{display:none!important}
+.booking .form-panel{background:var(--cream)!important;box-shadow:0 0 0 12px var(--blue)!important}
+.zones .title-band>span:last-child{display:inline-block;margin-inline-start:38px}
+@media(max-width:1000px){.booking .form-panel{box-shadow:none!important}}
