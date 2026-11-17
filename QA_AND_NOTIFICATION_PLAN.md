@@ -41,10 +41,10 @@ No payment or auto-confirmation.
 - No need to use the busy PawApp WhatsApp Business phone. Optional browser push notifications may be added later if explicitly enabled.
 - Consider a separately provisioned Supabase project/backend so the PawPark application database is isolated from PawApp Concierge CRM. No client-side service-role credentials; strong RLS/permissions, privacy safeguards and server-side anti-spam.
 
-## Email address discrepancy — MUST confirm before configuring delivery
-- Existing Canva website: `info@pawapp.net`.
-- User's latest spoken/written mention: `info@bauapp.net`.
-- Do not send emails or configure production routing until the organizer confirms which is correct.
+## Confirmed organizer notification email (2026-11-17)
+- **Official recipient: `info@pawapp.net`** — explicitly confirmed by the organizer.
+- `info@bauapp.net` was a typo and must never be used.
+- Configure this email as notification recipient once the secure backend and email service are ready, and verify successful delivery before launch.
 
 ## Design baseline
 Use exact latest Canva source (not screenshot crops) and original high-resolution photographs supplied by user.
