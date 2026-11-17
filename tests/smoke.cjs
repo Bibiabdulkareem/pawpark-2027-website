@@ -15,6 +15,7 @@ async function main(){
    await page.goto("http://127.0.0.1:8765/index.html",{waitUntil:"domcontentloaded"});
    await page.waitForSelector("#spaceForm");
    // Check that the seven original photos and official PawApp logo are actually loaded from the repository.
+   await page.locator(".contact-img img.photo").scrollIntoViewIfNeeded();
    await page.waitForFunction(() => Array.from(document.querySelectorAll("img.photo, img.official-pawapp-logo")).length === 9 && Array.from(document.querySelectorAll("img.photo, img.official-pawapp-logo")).every(img => img.complete && img.naturalWidth > 0),{timeout:30000}).catch(async err=>{throw new Error("Original image failed to load: "+JSON.stringify(await page.locator("img.photo, img.official-pawapp-logo").evaluateAll(els=>els.map(e=>({src:e.getAttribute("src"),complete:e.complete,naturalWidth:e.naturalWidth}))))+" "+err.message)});
    const photoSummary=await page.locator("img.photo").evaluateAll(els=>els.map(img=>({file:img.getAttribute("src"),naturalWidth:img.naturalWidth,naturalHeight:img.naturalHeight,fit:getComputedStyle(img).objectFit})));
    console.log("Loaded original photography:",photoSummary);
