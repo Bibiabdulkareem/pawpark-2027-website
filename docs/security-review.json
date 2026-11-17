@@ -1,0 +1,42 @@
+{
+  "score": 4,
+  "summary": "Focused review found no customer-data access bypass in the examined rules and passing tests. Strong private-read and workflow validation boundaries remain in place; broad public launch still needs abuse controls and recovery planning. This score is not a certification.",
+  "findings": [
+    {
+      "check": "Resource exhaustion and public create access",
+      "severity": "moderate",
+      "issue": "Unrestricted numbers of schema-valid anonymous application/queue batches can consume Spark and mail quotas; App Check and per-client rate limiting are not enforced.",
+      "recommendation": "Add tested abuse controls before broad promotion, monitor usage, and keep billing disabled. App Check alone is not a complete rate limiter. Obtain approval before any paid architecture change."
+    },
+    {
+      "check": "Recovery and administrative deletion boundary",
+      "severity": "moderate",
+      "issue": "Deletion protection and browser delete denial do not provide a full recovery backup or prevent privileged project owners from altering data.",
+      "recommendation": "Define a private backup/recovery and retention process; CSV is only a review copy. Seek approval for paid backup/export services."
+    },
+    {
+      "check": "Administrative auditability",
+      "severity": "minor",
+      "issue": "Workflow updates retain only last-editor metadata, not append-only status/note history; concurrent edits can replace the same field.",
+      "recommendation": "Add protected append-only history and conflict handling if the operational workflow requires detailed traceability."
+    },
+    {
+      "check": "Credential and account lifecycle",
+      "severity": "minor",
+      "issue": "The authorized Google account is a single administrator; account recovery/MFA were not verified. The project-limited worker uses a long-lived login held in private Apps Script properties.",
+      "recommendation": "Protect owner accounts, restrict script collaborators, and document scoped worker rotation/revocation without sharing its credentials."
+    },
+    {
+      "check": "Phone-field business validation",
+      "severity": "minor",
+      "issue": "Allowed character and length checks do not require a minimum count of digits, so crafted submissions can contain unusable phone strings.",
+      "recommendation": "Add aligned client/rules normalization and digit-count tests, including Arabic/Persian numeral input, in a reviewed follow-up."
+    },
+    {
+      "check": "Quota efficiency",
+      "severity": "minor",
+      "issue": "The dashboard listens to the full collection and reply drafts can be saved per keystroke.",
+      "recommendation": "Introduce pagination, server-side filtering and debounced draft writes before high-volume use."
+    }
+  ]
+}

@@ -272,7 +272,7 @@ filtered.forEach(function(row,i){newCard(list,row,i)});
 $("lang").addEventListener("click",function(){lang=lang==="en"?"ar":"en";labels();render()});
 $("search").addEventListener("input",render);$("filter").addEventListener("change",render);$("contractFilter").addEventListener("change",render);
 $("download").addEventListener("click",function(){var rows=load();if(!rows.length)return;var keys=["id","date","type","brand","contact","owner","phone","email","space","zone","custom","show","pet","species","breed","age","status","contractStage","notes","contactedAt","messageLang"];
-var quote=function(v){if(typeof v==="string"&&/^[=+@\-\t\r]/.test(v))v="\'"+v;return '"'+String(v==null?"":v).replace(/"/g,'""')+'"'};
+var quote=function(v){if(typeof v==="string"&&/^[\u0000-\u0020\uFEFF]*[=+@\-＝＋－＠]|^[\t\r\n]/.test(v))v="\'"+v;return '"'+String(v==null?"":v).replace(/"/g,'""')+'"'};
 var csv=[keys.join(",")].concat(rows.map(function(r){return keys.map(function(k){return quote(r[k])}).join(",")})).join("\r\n");
 var b=new Blob(["\uFEFF",csv],{type:"text/csv;charset=utf-8"}),url=URL.createObjectURL(b),a=document.createElement("a");
 a.href=url;a.download="pawpark-applications.csv";document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url)},1000)});
