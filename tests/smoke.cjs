@@ -38,6 +38,34 @@ async function main(){
    await page.locator("#lang").click();
    assert.equal(await page.locator("html").getAttribute("dir"),"rtl");
    assert.ok((await page.locator(".request").first().innerText()).includes("رقم الهاتف"));
+
+   // Admin replies: changing status should load the matching bilingual message template.
+   await page.locator(".manage .status-wrap select").first().selectOption("Approved");
+   let draft=await page.locator(".reply-tools textarea").inputValue();
+   assert.ok(draft.includes("الموافقة المبدئية"),"Arabic approved template missing");
+   const emailHref=await page.locator(".reply-tools a.email").getAttribute("href");
+   assert.ok(emailHref.startsWith("mailto:demo%40example.test")||emailHref.startsWith("mailto:demo@example.test"),"Missing email recipient");
+   assert.ok(decodeURIComponent(emailHref).includes("الموافقة المبدئية"),"Email draft body missing");
+   const waHref=await page.locator(".reply-tools a.whatsapp").getAttribute("href");
+   assert.ok(waHref.startsWith("https://wa.me/96599993407?text="),"Incorrect Kuwaiti WhatsApp link: "+waHref);
+   assert.ok(decodeURIComponent(waHref).includes("الموافقة المبدئية"),"WhatsApp draft missing");
+   await page.locator(".reply-controls select").selectOption("en");
+   draft=await page.locator(".reply-tools textarea").inputValue();
+   assert.ok(draft.includes("preliminary approval"),"English approved template missing");
+   await page.locator(".reply-tools textarea").fill("Custom follow-up for Pet Store");
+   await page.locator(".manage .status-wrap select").last().selectOption("Preparing");
+   await page.reload({waitUntil:"domcontentloaded"});
+   await page.locator(".request").waitFor();
+   assert.equal(await page.locator(".reply-tools textarea").inputValue(),"Custom follow-up for Pet Store","Edited message did not persist");
+   assert.equal(await page.locator(".manage .status-wrap select").last().inputValue(),"Preparing","Contract stage did not persist");
+   await page.locator("#contractFilter").selectOption("Preparing");
+   assert.equal(await page.locator(".request").count(),1,"Contract filter lost the request");
+   await page.locator("#contractFilter").selectOption("Signed");
+   assert.equal(await page.locator(".request").count(),0,"Contract filter should exclude the request");
+   await page.locator("#contractFilter").selectOption("all");
+   await page.locator(".lifecycle button").click();
+   const contactSaved=await page.evaluate(()=>JSON.parse(localStorage.getItem("pawpark_demo_requests")||"[]")[0].contactedAt);
+   assert.ok(contactSaved,"Contacted timestamp was not saved");
    assert.deepEqual(errors,[]);
    await context.close();
    console.log("PASS",width);
