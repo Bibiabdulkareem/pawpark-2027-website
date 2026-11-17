@@ -214,3 +214,7 @@ html[dir=rtl] .show-form{text-align:right}
 .booking .form-panel{background:var(--cream)!important;box-shadow:0 0 0 12px var(--blue)!important}
 .zones .title-band>span:last-child{display:inline-block;margin-inline-start:38px}
 @media(max-width:1000px){.booking .form-panel{box-shadow:none!important}}
+
+/* Preserve the Canva pet-show and contact photographs above section layers. */
+.show-left,.contact-img.has-photo{position:relative!important;z-index:2!important}
+.show-image.has-photo{position:relative!important;z-index:2!important}
