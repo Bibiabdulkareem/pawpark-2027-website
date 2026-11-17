@@ -32,6 +32,12 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: pawpark-canva-public-screenshots
-          path: test-results/pawpark-*.png
+          path: |
+            test-results/pawpark-*.png
+            index.html
+            site-canva-faithful.css
+            site-fixes.css
+            site-photos.css
+            assets/
           retention-days: 7
           if-no-files-found: ignore
