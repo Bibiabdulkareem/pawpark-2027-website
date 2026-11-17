@@ -14,10 +14,10 @@ h1,h2,h3{line-height:1!important}
 .btn:hover,.pill:hover{filter:brightness(.97)}
 /* Navigation is slim floating website chrome, separate from the original Canva art. */
 .top{position:absolute;top:0;left:0;right:0;z-index:50;background:transparent;border:0;box-shadow:none}
-.top-inner{width:min(100%,1366px);max-width:none;min-height:72px;padding:10px 30px;justify-content:flex-end;gap:16px}
+.top-inner{width:min(100%,1366px);max-width:none;min-height:72px;padding:10px 14px;justify-content:flex-end;gap:16px}
 .top .brand{margin-right:auto;gap:0}
 .top .brand-word{display:none!important}
-.top .official-pawapp-logo{width:54px!important;height:54px!important;min-width:54px!important;background:transparent;border-radius:10px;object-fit:contain}
+.top .official-pawapp-logo{width:54px!important;height:54px!important;min-width:54px!important;background:var(--cream);padding:4px;border-radius:9px;object-fit:contain}
 .topnav{gap:12px}
 .topnav .navlink{color:#fff}
 .topnav .pill{border:1px solid rgba(255,255,255,.68);color:#fff;background:rgba(0,35,86,.48)}
