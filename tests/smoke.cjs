@@ -24,7 +24,7 @@ async function login(page,email='bibi@pawapp.net'){
    const page=await visitor.newPage(),admin=await staff.newPage(),errors=[];
    page.on('pageerror',e=>errors.push(e.message));admin.on('pageerror',e=>errors.push(e.message));
    await page.goto(base+'/index.html');
-   await page.waitForFunction(()=>document.querySelector('.hero h1').textContent.includes('PAWPARK'));
+   await page.waitForFunction(()=>document.querySelector('.hero h1').textContent.toLowerCase().includes('pawpark'));
    await page.locator('img.photo,img.official-pawapp-logo').evaluateAll(imgs=>imgs.forEach(img=>img.loading='eager'));
    await page.waitForFunction(()=>Array.from(document.querySelectorAll('img.photo,img.official-pawapp-logo')).every(i=>i.complete&&i.naturalWidth>0));
    assert.equal(await page.locator('img.photo').count(),8);
@@ -60,7 +60,7 @@ async function login(page,email='bibi@pawapp.net'){
    await admin.waitForFunction(()=>document.querySelector('#total').textContent==='2');
    await admin.locator('#signOut').click();await admin.locator('#signIn').waitFor();assert.equal(await admin.locator('.request-head').count(),0);
    // Force a write failure: no success receipt may be shown.
-   await page.reload();await page.waitForFunction(()=>document.querySelector('.hero h1').textContent.includes('PAWPARK'));
+   await page.reload();await page.waitForFunction(()=>document.querySelector('.hero h1').textContent.toLowerCase().includes('pawpark'));
    await page.locator('#brand').fill('QA Failure');await page.locator('#contactPerson').fill('QA Contact');await page.locator('#phone').fill('99999999');await page.locator('#email').fill('qa@example.test');await page.locator('[data-size="3 × 3 m"]').click();await page.locator('#zone').selectOption('Pets Zone');
    await page.evaluate(async()=>{const {db}=await import('./firebase-backend.js');const {disableNetwork}=await import('https://www.gstatic.com/firebasejs/13.4.0/firebase-firestore.js');await disableNetwork(db)});
    await page.locator('#spaceForm button[type=submit]').click();
