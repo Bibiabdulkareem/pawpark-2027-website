@@ -28,7 +28,10 @@ html[dir="rtl"] .hero-copy{padding:70px 0 60px 38px;align-items:flex-start}html[
 .result .confirm-note{border-top:1px solid #d5dce5;padding:13px 4px 0;font-size:13px;line-height:1.7;margin:0 auto;max-width:530px}
 .result .confirm-demo{background:#fff2c6;color:#724b06;border-radius:10px;padding:11px 12px;margin-top:13px;font-size:12px;font-weight:800;line-height:1.6}
 @media(max-width:800px){.result{padding:17px 12px}.result .confirm-reference{padding:12px 8px}}
-</style></head>
+.result .confirm-social{margin:15px auto 10px;padding:14px 12px;border:1px solid #d9d8c9;border-radius:13px;background:#f6f6e9;max-width:530px;text-align:center}
+.result .confirm-social-text{color:#003e8e;font-size:13px;line-height:1.75;margin:0 0 10px}
+.result .confirm-social-link{display:inline-flex;align-items:center;justify-content:center;min-height:43px;border-radius:10px;padding:10px 16px;background:#003e8e;color:#fff!important;font-size:13px;font-weight:800;text-decoration:none}
+.result .confirm-social-link:hover,.result .confirm-social-link:focus-visible{background:#072b64;text-decoration:none}</style></head>
 <body>
 <div class="demo" data-en="DESIGN & BOOKING DEMO — requests stay only in this browser; no real email is sent." data-ar="نسخة تجريبية للتصميم والحجز — الطلبات تبقى على هذا المتصفح فقط، ولا يُرسل إيميل فعلي."></div>
 <header class="top"><div class="container top-inner">
@@ -118,6 +121,14 @@ function receipt(id,obj,target){
  var zone=obj.zone?(tr(" · Preferred zone: "," · المنطقة المفضلة: ")+obj.zone):"";
  putText("p","confirm-detail",tr("Request: ","الطلب: ")+party+" — "+choice+zone);
  putText("p","confirm-note",tr("Once real submissions are enabled, the PawPark team will review your request and contact you with the next steps as soon as possible.","بعد تفعيل استقبال الطلبات الحقيقي، يراجع فريق باو بارك طلبك ويتواصل معاك بأقرب وقت بخصوص الخطوات القادمة."));
+ var more=putText("div","confirm-social","");
+ putText("p","confirm-social-text",tr("Want to know more about PawPark 2027 and upcoming event announcements? Follow PawApp on Instagram.","تبي تعرف أكثر عن باو بارك ٢٠٢٧ وآخر أخبار الفعالية؟ تابع حساب باو أب على إنستغرام."),more);
+ var social=document.createElement("a");
+ social.className="confirm-social-link";
+ social.href="https://www.instagram.com/pawapp_/";
+ social.target="_blank";social.rel="noopener noreferrer";
+ social.textContent=tr("Follow PawApp on Instagram","تابع باو أب على إنستغرام");
+ more.appendChild(social);
  putText("p","confirm-demo",tr("TEST ONLY — this request was not sent to PawPark. It is saved on this browser only and cannot be seen on other devices.","تجربة فقط — هذا الطلب ما وصل لفريق باو بارك. محفوظ على هالمتصفح فقط وما يظهر على الأجهزة الثانية."));
  if(new URLSearchParams(location.search).get("admin_demo")==="1"){var link=document.createElement("a");link.href="admin.html";link.className="btn beige";link.textContent=tr("OPEN ADMIN DEMO ON THIS DEVICE","افتح معاينة لوحة الإدارة على نفس الجهاز");root.appendChild(link)}
 }
