@@ -266,5 +266,5 @@ html[lang="en"] .zones .title-band>span:last-child{
 @media(max-width:540px){
   html[lang="en"] .zones .title-band .band::before{left:-10px;right:-15px;top:-9px;bottom:-9px}
   html[lang="en"] .zones .title-band>span:last-child{margin-inline-start:26px}
-  html[lang="en"] .booking-title .book-title-keyword::before{left:-20px;right:-11px;top:-7px;bottom:-7px}
+  html[lang="en"] .booking-title .book-title-keyword::before{left:-20px;right:-5px;top:-7px;bottom:-7px}
 }
