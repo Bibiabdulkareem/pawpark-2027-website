@@ -268,3 +268,46 @@ html[lang="en"] .zones .title-band>span:last-child{
   html[lang="en"] .zones .title-band>span:last-child{margin-inline-start:26px}
   html[lang="en"] .booking-title .book-title-keyword::before{left:-20px;right:-5px;top:-7px;bottom:-7px}
 }
+
+
+/* Nov 18: Complete the English BOOK highlight without touching YOUR SPACE or Arabic. */
+html[lang="en"] .booking-title .book-title-rest{display:inline-block;margin-inline-start:20px}
+@media(max-width:540px){
+  html[lang="en"] .booking-title .book-title-keyword::before{right:-18px!important}
+  html[lang="en"] .booking-title .book-title-rest{margin-inline-start:22px}
+}
+@media(min-width:541px) and (max-width:1000px){
+  html[lang="en"] .booking-title .book-title-keyword::before{right:-21px!important}
+  html[lang="en"] .booking-title .book-title-rest{margin-inline-start:27px}
+}
+@media(min-width:1001px){
+  html[lang="en"] .booking-title .book-title-keyword::before{right:-25px!important}
+  html[lang="en"] .booking-title .book-title-rest{margin-inline-start:30px}
+  /* On widescreens the photos must participate in the two-column layout;
+     the previous absolute stack could leave an empty photo column. */
+  .booking .book-grid{
+    display:grid!important;
+    position:relative;
+    grid-template-columns:minmax(0,47.87%) minmax(0,47.44%);
+    column-gap:2.1%;
+    align-items:start;
+  }
+  .booking .book-photos{
+    display:flex!important; flex-direction:column!important; gap:64px!important;
+    position:relative!important; top:auto!important; left:auto!important;
+    z-index:2!important; width:100%!important; height:auto!important;
+    padding-top:26px;
+  }
+  .booking .book-photos .media.has-photo,
+  .booking .book-photos .media.has-photo:nth-child(2){
+    display:block!important; position:relative!important; top:auto!important; left:auto!important;
+    width:100%!important; min-height:0!important; height:205px!important;
+    aspect-ratio:auto!important; opacity:1;
+  }
+  .booking .book-photos .media.has-photo:nth-child(2){height:182px!important}
+  .booking .book-photos .photo{display:block!important;opacity:.51!important;visibility:visible!important}
+  .booking .form-panel{
+    margin:0!important;width:100%!important;
+    box-shadow:0 0 0 12px var(--blue)!important;
+  }
+}
