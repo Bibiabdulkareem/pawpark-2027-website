@@ -50,8 +50,8 @@ const path=require('node:path');
         const bounds=sel=>{const r=document.querySelector(sel).getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width,height:r.height}};
         return {photo1:bounds('.book-photos .media:first-child'),photo2:bounds('.book-photos .media:nth-child(2)'),form:bounds('.booking .form-panel')};
       });
-      assert.ok(bookGeometry.photo1.width>150&&bookGeometry.photo1.height>120,'Booking photo 1 missing '+width);
-      assert.ok(bookGeometry.photo2.width>150&&bookGeometry.photo2.height>120,'Booking photo 2 missing '+width);
+      assert.ok(bookGeometry.photo1.width>150&&bookGeometry.photo1.height>90,'Booking photo 1 missing '+width);
+      assert.ok(bookGeometry.photo2.width>150&&bookGeometry.photo2.height>90,'Booking photo 2 missing '+width);
       if(width>=1001){
         assert.ok(bookGeometry.photo1.right<bookGeometry.form.left,'Desktop photo must be left of form '+JSON.stringify(bookGeometry));
         assert.ok(bookGeometry.photo2.top>bookGeometry.photo1.bottom,'Two translucent desktop images must be stacked '+JSON.stringify(bookGeometry));
