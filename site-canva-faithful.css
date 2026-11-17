@@ -218,3 +218,53 @@ html[dir=rtl] .show-form{text-align:right}
 /* Preserve the Canva pet-show and contact photographs above section layers. */
 .show-left,.contact-img.has-photo{position:relative!important;z-index:2!important}
 .show-image.has-photo{position:relative!important;z-index:2!important}
+
+
+/* English-only title ribbons: follow the highlighted word, never the full heading.
+   Keep existing Arabic title art unchanged for its separately planned review. */
+html[lang="en"] .zones .title-band::before,
+html[lang="en"] .booking-title::before{display:none!important}
+html[lang="en"] .zones .title-band .band,
+html[lang="en"] .booking-title .book-title-keyword{
+  display:inline-block!important;
+  position:relative!important;
+  isolation:isolate;
+  background:transparent!important;
+}
+html[lang="en"] .zones .title-band .band::before{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  top:-12px;
+  bottom:-12px;
+  left:-64px;
+  right:-23px;
+  background:var(--blue);
+  border-radius:0 999px 999px 0;
+  pointer-events:none;
+}
+html[lang="en"] .booking-title .book-title-keyword::before{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  top:-6px;
+  bottom:-6px;
+  left:-300px;
+  right:-19px;
+  background:var(--beige);
+  border-radius:0 999px 999px 0;
+  pointer-events:none;
+}
+html[lang="en"] .zones .title-band>span:last-child{
+  position:relative;
+  margin-inline-start:38px;
+}
+@media(max-width:1000px){
+  html[lang="en"] .zones .title-band .band::before{left:-20px;right:-18px}
+  html[lang="en"] .booking-title .book-title-keyword::before{left:-20px;right:-15px}
+}
+@media(max-width:540px){
+  html[lang="en"] .zones .title-band .band::before{left:-10px;right:-15px;top:-9px;bottom:-9px}
+  html[lang="en"] .zones .title-band>span:last-child{margin-inline-start:26px}
+  html[lang="en"] .booking-title .book-title-keyword::before{left:-20px;right:-11px;top:-7px;bottom:-7px}
+}
