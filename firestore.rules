@@ -1,0 +1,112 @@
+// PawPark 2027 only. applications/{id} contains customer details and private workflow.
+// Required fields: type (Space request/Pet show), details (bounded map per type),
+// language (en/ar), createdAt/updatedAt (timestamps), status (enum), notes (<=5000),
+// contractStage (enum), updatedBy (<=254), draftMessage (<=10000), draftStatus
+// (<=30), draftLanguage/messageLang (<=2), contactedAt (<=40).
+// notificationQueue/{sameId}: type (enum), createdAt (immutable timestamp), sent (bool),
+// sentAt (null/timestamp). No customer details. Only the dedicated worker can read/ack it.
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && request.auth.token.email == 'bibi@pawapp.net'
+        && request.auth.token.firebase.sign_in_provider == 'google.com';
+    }
+    function text(value, min, max) {
+      return value is string && value.size() >= min && value.size() <= max;
+    }
+    function email(value) {
+      return text(value, 3, 254) && value.matches('^[^\\s@]+@[^\\s@]+[.][^\\s@]+$');
+    }
+    function phone(value) {
+      return text(value, 7, 30) && value.matches('^[+0-9 ()-]{7,30}$');
+    }
+    function validDetails(type, d) {
+      return d is map && (
+        (type == 'Space request'
+          && d.keys().hasAll(['brand','contact','phone','email','space','zone','custom'])
+          && d.keys().hasOnly(['brand','contact','phone','email','space','zone','custom'])
+          && text(d.brand, 1, 110) && text(d.contact, 1, 100)
+          && phone(d.phone) && email(d.email)
+          && d.space in ['3 × 3 m','3 × 4 m','Custom']
+          && d.zone in ['Kids Zone','Pets Zone','Food & Beverages','Trucks']
+          && text(d.custom, 0, 2000) && (d.space != 'Custom' || d.custom.size() > 0))
+        || (type == 'Pet show'
+          && d.keys().hasAll(['show','owner','phone','email','pet','species','breed','age'])
+          && d.keys().hasOnly(['show','owner','phone','email','pet','species','breed','age'])
+          && d.show in ['Pet Fashion Show','Training Show','Pet Beauty & Wellness Championship']
+          && text(d.owner, 1, 110)
+          && phone(d.phone) && (d.email == '' || email(d.email))
+          && text(d.pet, 1, 100) && d.species in ['Dog','Cat']
+          && text(d.breed, 0, 100) && text(d.age, 0, 50)));
+    }
+    function validApplication(d) {
+      return d.keys().hasAll(['type','details','language','createdAt','updatedAt','status',
+          'notes','contractStage','updatedBy','draftMessage','draftStatus','draftLanguage',
+          'messageLang','contactedAt'])
+        && d.keys().hasOnly(['type','details','language','createdAt','updatedAt','status',
+          'notes','contractStage','updatedBy','draftMessage','draftStatus','draftLanguage',
+          'messageLang','contactedAt'])
+        && validDetails(d.type, d.details) && d.language in ['en','ar']
+        && d.createdAt is timestamp && d.updatedAt is timestamp
+        && d.status in ['New','Under Review','Approved','Rejected','Waitlisted']
+        && text(d.notes, 0, 5000)
+        && d.contractStage in ['Not started','Preparing','Sent','Signed']
+        && text(d.updatedBy, 0, 254) && text(d.draftMessage, 0, 10000)
+        && text(d.draftStatus, 0, 30) && d.draftLanguage in ['','en','ar']
+        && d.messageLang in ['','en','ar'] && text(d.contactedAt, 0, 40);
+    }
+    match /applications/{id} {
+      // Visitors can submit only a new, validated request. No customer can read records.
+      allow create: if id.matches('^PP27-[A-Za-z0-9]{20}$')
+        && validApplication(request.resource.data)
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.updatedAt == request.time
+        && request.resource.data.status == 'New'
+        && request.resource.data.notes == ''
+        && request.resource.data.contractStage == 'Not started'
+        && request.resource.data.updatedBy == ''
+        && request.resource.data.draftMessage == ''
+        && request.resource.data.draftStatus == ''
+        && request.resource.data.draftLanguage == ''
+        && request.resource.data.messageLang == ''
+        && request.resource.data.contactedAt == ''
+        && getAfter(/databases/$(database)/documents/notificationQueue/$(id)).data.createdAt == request.time
+        && getAfter(/databases/$(database)/documents/notificationQueue/$(id)).data.type == request.resource.data.type;
+      allow read: if isAdmin();
+      allow update: if isAdmin() && validApplication(request.resource.data)
+        && request.resource.data.updatedAt == request.time
+        && request.resource.data.updatedBy == request.auth.token.email
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'status','notes','contractStage','updatedAt','updatedBy','draftMessage',
+          'draftStatus','draftLanguage','messageLang','contactedAt']);
+      allow delete: if false;
+    }
+    function isNotificationWorker() {
+      return request.auth != null && request.auth.uid == 'P7lZLSwavefAwvaqRvFzKS7i7Tp1'
+        && request.auth.token.firebase.sign_in_provider == 'password';
+    }
+    function validNotification(d) {
+      return d.keys().hasAll(['type','createdAt','sent','sentAt'])
+        && d.keys().hasOnly(['type','createdAt','sent','sentAt'])
+        && d.type in ['Space request','Pet show'] && d.createdAt is timestamp
+        && d.sent is bool && (d.sentAt == null || d.sentAt is timestamp);
+    }
+    match /notificationQueue/{id} {
+      allow create: if id.matches('^PP27-[A-Za-z0-9]{20}$')
+        && validNotification(request.resource.data)
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.sent == false && request.resource.data.sentAt == null
+        && getAfter(/databases/$(database)/documents/applications/$(id)).data.createdAt == request.time
+        && getAfter(/databases/$(database)/documents/applications/$(id)).data.type == request.resource.data.type;
+      allow read: if isNotificationWorker();
+      allow update: if isNotificationWorker() && validNotification(request.resource.data)
+        && request.resource.data.sent == true && request.resource.data.sentAt == request.time
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['sent','sentAt']);
+      allow delete: if false;
+    }
+    match /{document=**} { allow read, write: if false; }
+  }
+}

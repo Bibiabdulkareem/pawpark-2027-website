@@ -1,37 +1,43 @@
-# PawPark 2027 — Website Preview
+# PawPark 2027
 
-A bilingual English/Arabic responsive recreation of the approved PawPark Canva design direction.
+Arabic/English website connected exclusively to the independent Firebase project **pawpark-2027-web**, display name **PawPark 2027**. Billing is disabled (Spark). No existing Firebase or Supabase project is used.
 
-**Design reference:** https://canva.link/z3mgnhx1ocxpj92
+- Website: https://bibiabdulkareem.github.io/pawpark-2027-website/
+- Protected admin dashboard: https://bibiabdulkareem.github.io/pawpark-2027-website/admin.html
+- Firebase: https://console.firebase.google.com/project/pawpark-2027-web/overview
 
-## Preview status
+## Applications and access
 
-The following files have been committed:
-- [index.html](index.html) — public visitor layout, responsive zones, demo space request and pet show registration, English/Arabic switching.
-- [admin.html](admin.html) — **demo-only** request viewer with search and CSV download. **Not secured** and not suitable for personal data.
-- [assets/pawapp-logo.svg](assets/pawapp-logo.svg) — PawApp logo.
-- [DESIGN_SPEC.md](DESIGN_SPEC.md) — approved spec for full production implementation.
-- [QA_AND_NOTIFICATION_PLAN.md](QA_AND_NOTIFICATION_PLAN.md) — testing and notifications plan.
+Space bookings and pet-show registrations write to Cloud Firestore Standard `(default)` in **Frankfurt, europe-west3**. Confirmation and reference appear after Firestore acknowledges the write. Customer records are not stored in browser localStorage. A request is not a confirmed booking and no payment is collected.
 
-## Preview the website
+Only the verified Google account **bibi@pawapp.net**, signed in through Google, can read records and change statuses, internal notes, agreement progress and reply drafts. This is enforced in deployed Firestore rules as well as the interface. Other users cannot read, update or delete applications. The public may create schema-validated requests. No client, including the admin dashboard, may delete applications. Database deletion protection is enabled.
 
-Open **Settings → Pages → Build and deployment → Source = Deploy from a branch → Branch = main → Folder = /(root) → Save**. After GitHub Pages finishes deploying, the public URL should be:
+Admin sessions last for the browser session. Sign out on shared devices. Email/WhatsApp reply buttons open drafts; they do not automatically send messages. Agreement stages track progress; they do not sign legal agreements or upload contracts.
 
-https://bibiabdulkareem.github.io/pawpark-2027-website/
+## Free organizer email notifications
 
-Admin simulation (same browser only):
+Script: https://script.google.com/home/projects/1KV0EQ7H9PTRHXwNrSAjER_zQ-03G1JXi3Lgb9LzlB6JQY7oe93onlbq6/edit
 
-https://bibiabdulkareem.github.io/pawpark-2027-website/admin.html
+`notifications/Code.gs` and `notifications/appsscript.json` provide a Google Apps Script worker owned by bibi@pawapp.net. After its one-time Google authorization and timer installation, it polls every five minutes and sends grouped new-application references to **info@pawapp.net**. Customer contact details stay in the protected dashboard. The sender uses a dedicated Firebase Authentication worker with access only to a reference-only notification queue in this project. Its generated password stays in private Apps Script properties. It cannot read customer applications or access any other Firebase project. No Google database OAuth scope, service-account key, Firebase Functions or paid extension is used.
 
-The admin simulation is *not* the production admin dashboard; anyone can visit that static URL, but data is stored only on their own device and not shared across devices.
+Notification activation and delivery must be verified in Apps Script before claiming that email is live. The worker checks daily mail quota and keeps unsent applications queued when exhausted. Apps Script has free per-user quotas; delivery may be delayed. See https://developers.google.com/apps-script/guides/services/quotas. A rare crash between sending an email and saving its acknowledgement may cause a duplicate notification.
 
-## Critical demo limits
+To install: create a standalone Apps Script project under **bibi@pawapp.net**, paste `Code.gs`, enable the manifest in Project Settings and paste `appsscript.json`, then run `preparePawParkWorker`. Pin the returned worker UID in the notification-only rule (never grant customer record access), deploy and test the rules, then run `installPawParkNotifications`. Approve only external-request, send-mail and trigger permissions. It queries only the reference-only queue in `pawpark-2027-web`, installs the timer and sends a connection email. Do not add billing.
 
-- The site's photos are placeholders. The user's **original** high-resolution Canva photo assets are still required, and should replace these placeholders while preserving the exact compositions.
-- Demo requests are saved in browser localStorage **on the same device only**; they are not sent to PawApp, email, or a database. Do not enter actual customer personal data during this preview.
-- The protected, cross-device admin dashboard, real request storage and notifications to **info@pawapp.net** will require a separate secure backend with authenticated admin access.
-- Space and pet-show requests are *requests for review*, not confirmed bookings. No payment is collected.
-- The 3 visible zone cards are Kids, Pets and Food & Beverage, matching Canva. Trucks remains only as an option in the form as requested earlier.
-- Date used: **21–23 January 2027** per latest approved event brief; older Canva design text has a different date.
+## Spark limits and operations
 
-This project will be updated with approved photos, finalized layout QA, secure form backend, and real email notifications before public launch.
+Spark has hard usage limits. Exhausting a quota may temporarily block new submissions or admin reads; it does not authorize a billing upgrade. Existing records are not automatically deleted. Monitor the new project's usage. Public create access is validated and size-limited but does not provide full bot prevention; App Check/anti-abuse protections should be reviewed before a broad campaign. No paid backups, TTL deletion, Storage uploads, Cloud Functions or paid services are configured.
+
+The initial rules are a tested prototype and should be reviewed before broad launch. To add an administrator, update the allowlist in **both** `firestore.rules` and `firebase-backend.js`, test, then explicitly deploy the rules to this project. Never use credentials or IDs from another PawApp project.
+
+The original CSS and all photographs are preserved. Historical SQL in `backend/` is unused; the active backend is Firebase only. Existing browser demo records are not imported.
+
+## Development and verification
+
+Install dependencies with `npm ci`, then install the browser with `npx playwright install chromium`. The emulator suite needs Java 21 or later.
+
+Run `npx -y firebase-tools@latest emulators:exec --only firestore,auth --project demo-pawpark-2027 --config emulators.json 'npm run test:rules && npm test'`.
+
+Tests use a demo project and emulators, not real customer data. They cover public creation, unauthorized access denial, admin workflow, invalid payloads, immutable fields, bilingual mobile/desktop layouts, cross-device synchronization, sign-out privacy, and offline confirmation behavior.
+
+Deploy only with an explicit target: `npx -y firebase-tools@latest deploy --only firestore,auth --project pawpark-2027-web`. The existing GitHub Pages website hosts the static files. Never attach a Cloud Billing account or upgrade to Blaze without approval.

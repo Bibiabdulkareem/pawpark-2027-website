@@ -2,7 +2,7 @@
 <html lang="en" dir="ltr"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#003e8e">
-<title>PawPark — Requests Demo</title>
+<title>PawPark — Admin</title>
 <style>
 :root{--blue:#003e8e;--cream:#f6f6e9;--beige:#eddeae;--yellow:#f2df68;--ink:#0b2b5d}
 *{box-sizing:border-box}html,body{margin:0;max-width:100%;overflow-x:clip}
@@ -59,9 +59,17 @@ main{padding:25px 0 65px}
 <div class="nav-actions"><button class="btn" id="lang" type="button">العربية</button><a href="index.html" data-en="Visitor website" data-ar="موقع الزوار"></a></div>
 </div></header>
 <main class="wrap">
-<p class="note" data-en="DEMO ONLY · Requests are saved in this browser on this device. No email is sent, and this page is not a secure admin login yet. Use fictional test information only." data-ar="تجربة فقط · الطلبات محفوظة على هذا المتصفح والجهاز فقط. لا يتم إرسال إيميل، وهذه ليست لوحة إدارة محمية بعد. استخدمي بيانات تجريبية غير حقيقية."></p>
-<div class="topline"><h2 data-en="Incoming requests" data-ar="الطلبات الواردة"></h2><small data-en="Private dashboard design preview" data-ar="معاينة تصميم لوحة الإدارة"></small></div>
-<section class="stats" aria-label="Summary"><div class="stat"><strong id="total">0</strong><span data-en="All demo requests" data-ar="جميع الطلبات"></span></div><div class="stat"><strong id="spaces">0</strong><span data-en="Space requests" data-ar="طلبات المساحات"></span></div><div class="stat"><strong id="pets">0</strong><span data-en="Pet show" data-ar="عروض الحيوانات"></span></div></section>
+<section id="adminGate" class="request">
+<p data-en="Sign in with your authorized PawPark Google account." data-ar="سجّل الدخول بحساب Google المعتمد لإدارة باو بارك."></p>
+<button id="signIn" class="btn" type="button" data-en="Sign in with Google" data-ar="تسجيل الدخول باستخدام Google"></button>
+<p id="authState" role="status"></p>
+</section>
+<button id="signOut" class="btn" type="button" hidden data-en="Sign out" data-ar="تسجيل الخروج"></button>
+<p id="saveState" role="status"></p>
+<section id="dashboard" hidden>
+<p class="note" data-en="Protected PawPark inbox · Customer information is private. Changes are saved to the shared database. Sign out when finished." data-ar="صندوق باو بارك المحمي · معلومات العملاء خاصة. تُحفظ التغييرات في قاعدة البيانات المشتركة. سجّل الخروج بعد الانتهاء."></p>
+<div class="topline"><h2 data-en="Incoming requests" data-ar="الطلبات الواردة"></h2><small data-en="Authorized administrators only" data-ar="للمسؤولين المعتمدين فقط"></small></div>
+<section class="stats" aria-label="Summary"><div class="stat"><strong id="total">0</strong><span data-en="All applications" data-ar="جميع الطلبات"></span></div><div class="stat"><strong id="spaces">0</strong><span data-en="Space requests" data-ar="طلبات المساحات"></span></div><div class="stat"><strong id="pets">0</strong><span data-en="Pet show" data-ar="عروض الحيوانات"></span></div></section>
 <div class="filters">
 <input id="search" type="search" data-en-placeholder="Search name or phone" data-ar-placeholder="ابحث بالاسم أو الرقم" aria-label="Search name or phone">
 <select id="filter" aria-label="Filter by request type"><option value="all" data-en="All requests" data-ar="كل الطلبات"></option><option value="Space request" data-en="Space requests" data-ar="طلبات المساحات"></option><option value="Pet show" data-en="Pet show requests" data-ar="طلبات عروض الحيوانات"></option></select>
@@ -71,17 +79,22 @@ main{padding:25px 0 65px}
 <div id="statusOverview" class="status-overview" aria-label="Application status filters"></div>
 <p id="count" class="count" aria-live="polite"></p>
 <div id="list" class="cards" aria-live="polite"></div>
-<p class="bottom" data-en="A production version will use authenticated admin access, secure database storage and notifications to info@pawapp.net. This demo does not sync across devices or send messages automatically." data-ar="النسخة الرسمية راح تحتاج دخول أدمن محمي وقاعدة بيانات وإشعارات إلى info@pawapp.net. هذي التجربة لا تتزامن بين الأجهزة."></p>
+<p class="bottom" data-en="Applications are shared across devices for authorized administrators. Email and WhatsApp replies are drafts; send them in the selected app." data-ar="تظهر الطلبات للمسؤولين المعتمدين عبر الأجهزة. الردود بالإيميل والواتساب مسودات تُرسل من التطبيق المختار."></p>
+</section>
 </main>
-<script>
+<script type="module">
+import { authorizedAdmin, signInAdmin, signOutAdmin, watchAdmin, watchApplications, updateApplication } from "./firebase-backend.js";
 (function(){"use strict";
 var lang="en";
 function $(id){return document.getElementById(id)}
 function tr(en,ar){return lang==="ar"?ar:en}
-function load(){try{var x=JSON.parse(localStorage.getItem("pawpark_demo_requests")||"[]");return Array.isArray(x)?x.filter(function(v){return v&&typeof v==="object"}):[]}catch(e){return []}}
-function save(rows){try{localStorage.setItem("pawpark_demo_requests",JSON.stringify(rows))}catch(e){}}
+var rowsCache=[],serverRows=[],pending=new Map(),queues=new Map(),revision=0,unsubscribe=null,activeAdmin=false;
+function load(){return rowsCache}
+function rebuild(){rowsCache=serverRows.map(row=>Object.assign({},row,pending.get(row.id)?.values||{}))}
+function saveNotice(text){$("saveState").textContent=text}
+function refreshRows(rows){serverRows=rows;rebuild();if(!document.activeElement?.closest(".request textarea"))render()}
 function put(node,tag,cls,value){var el=document.createElement(tag);if(cls)el.className=cls;if(value!==undefined&&value!==null)el.textContent=String(value);node.appendChild(el);return el}
-function labels(){document.documentElement.lang=lang;document.documentElement.dir=lang==="ar"?"rtl":"ltr";$("lang").textContent=lang==="ar"?"English":"العربية";document.querySelectorAll("[data-en][data-ar]").forEach(function(e){e.textContent=e.getAttribute("data-"+lang)});$("search").placeholder=$("search").getAttribute("data-"+lang+"-placeholder");document.title=tr("PawPark — Request Inbox Demo","باو بارك — تجربة صندوق الطلبات")}
+function labels(){document.documentElement.lang=lang;document.documentElement.dir=lang==="ar"?"rtl":"ltr";$("lang").textContent=lang==="ar"?"English":"العربية";document.querySelectorAll("[data-en][data-ar]").forEach(function(e){e.textContent=e.getAttribute("data-"+lang)});$("search").placeholder=$("search").getAttribute("data-"+lang+"-placeholder");document.title=tr("PawPark — Request Inbox","باو بارك — صندوق الطلبات")}
 function itemField(parent,en,ar,value){if(value===undefined||value===null||value==="")return;var wrap=put(parent,"div","field");put(wrap,"span","",tr(en,ar));put(wrap,"b","",value)}
 function phoneHref(v){return "tel:"+String(v||"").replace(/[^+0-9]/g,"")}
 
@@ -92,7 +105,23 @@ var contractAr=["لم يبدأ","تجهيز العقد","تم إرسال الع�
 var selectedStatus="all";
 function stateOf(row){return states.includes(row.status)?row.status:"New"}
 function nameOfStatus(s){var i=states.indexOf(s);return i<0?String(s||""):tr(states[i],statesAr[i])}
-function savePartial(id,values){var all=load();var target=all.find(function(v){return v.id===id});if(!target)return;Object.assign(target,values);save(all)}
+function savePartial(id,values){
+ if(!activeAdmin)return Promise.reject(new Error("unauthorized"));
+ var rev=++revision,previous=pending.get(id);
+ pending.set(id,{revision:rev,values:Object.assign({},previous?.values||{},values)});rebuild();
+ saveNotice(tr("Saving changes…","جاري حفظ التغييرات…"));
+ var job=(queues.get(id)||Promise.resolve()).catch(()=>{}).then(()=>updateApplication(id,values));
+ queues.set(id,job);
+ job.then(()=>{
+   if(pending.get(id)?.revision===rev){pending.delete(id);rebuild()}
+   if(queues.get(id)===job){queues.delete(id);if(!queues.size)saveNotice(tr("All changes saved","تم حفظ جميع التغييرات"))}
+ }).catch(()=>{
+   if(pending.get(id)?.revision===rev){pending.delete(id);rebuild();render()}
+   if(queues.get(id)===job)queues.delete(id);
+   saveNotice(tr("Could not save a change. Check your connection and re-enter the change.","تعذر حفظ أحد التغييرات. تحقق من الاتصال وأعد إدخال التغيير."));
+ });
+ return job;
+}
 function normalPhone(v){
  var digits=String(v||"").replace(/[^0-9+]/g,"");
  if(digits.startsWith("00"))digits=digits.slice(2);
@@ -149,6 +178,7 @@ function contactButtons(parent,row){
  reset.type="button";
  var subjectBox=put(box,"div","subject");
  var text=put(box,"textarea","");
+ text.maxLength=10000;
  text.setAttribute("aria-label",tr("Editable reply message","نص الرسالة قابل للتعديل"));
  text.dir=messageLang==="ar"?"rtl":"ltr";
  var validDraft=row.draftStatus===status&&row.draftLanguage===messageLang;
@@ -187,7 +217,7 @@ function newCard(container,row,idx){var card=put(container,"article","request"),
 put(name,"h3","",row.brand||row.owner||tr("Unnamed request","طلب بدون اسم"));
 var date="";try{date=row.date?new Date(row.date).toLocaleString(lang==="ar"?"ar-KW":"en-GB"):""}catch(e){}
 put(name,"div","meta",(row.id||"DEMO")+" · "+date+" · "+(row.type==="Pet show"?tr("Pet show","عرض حيوانات"):tr("Book Your Space","طلب مساحة")));
-put(head,"span","tag",nameOfStatus(stateOf(row))+tr(" · Demo"," · تجريبي"));
+put(head,"span","tag",nameOfStatus(stateOf(row))+"");
 var data=put(card,"div","fields");
 if(row.type==="Space request"){
 itemField(data,"Contact person","اسم المسؤول",row.contact);itemField(data,"Mobile / WhatsApp","رقم الهاتف",row.phone);
@@ -200,16 +230,16 @@ itemField(data,"Pet's name","اسم الحيوان",row.pet);itemField(data,"Pet
 itemField(data,"Breed","السلالة",row.breed);itemField(data,"Age","العمر",row.age);
 }
 var manage=put(card,"div","manage"),sw=put(manage,"label","status-wrap");
-put(sw,"span","",tr("Status (demo only)","الحالة (تجريبي)"));
+put(sw,"span","",tr("Status","الحالة"));
 var select=put(sw,"select","");
 states.forEach(function(s,i){var opt=document.createElement("option");opt.value=s;opt.textContent=tr(s,statesAr[i]);select.appendChild(opt)});
 select.value=states.indexOf(row.status)>=0?row.status:"New";
 select.addEventListener("change",function(){savePartial(row.id,{status:select.value,draftMessage:"",draftStatus:"",draftLanguage:""});render()});
-var nw=put(manage,"label","notes-wrap");put(nw,"span","",tr("Internal notes (demo only)","ملاحظات داخلية (تجريبية)"));
-var ta=put(nw,"textarea","");ta.placeholder=tr("Notes for follow-up","ملاحظات المتابعة");ta.value=row.notes||"";ta.addEventListener("change",function(){savePartial(row.id,{notes:ta.value})});
+var nw=put(manage,"label","notes-wrap");put(nw,"span","",tr("Internal notes","ملاحظات داخلية"));
+var ta=put(nw,"textarea","");ta.maxLength=5000;ta.placeholder=tr("Notes for follow-up","ملاحظات المتابعة");ta.value=row.notes||"";ta.addEventListener("change",function(){savePartial(row.id,{notes:ta.value})});
 if(row.type==="Space request"){
  var cw=put(manage,"label","status-wrap");
- put(cw,"span","",tr("Contract progress (demo)","مرحلة العقد (تجريبي)"));
+ put(cw,"span","",tr("Agreement progress","مرحلة الاتفاقية"));
  var contract=put(cw,"select","");
  contractStates.forEach(function(s,i){var opt=put(contract,"option","",tr(s,contractAr[i]));opt.value=s});
  contract.value=contractStates.includes(row.contractStage)?row.contractStage:"Not started";
@@ -217,7 +247,7 @@ if(row.type==="Space request"){
 }
 contactButtons(card,row);
 }
-function render(){try{
+function render(){if(!activeAdmin)return;try{
 var rows=load(),search=$("search").value.trim().toLowerCase(),filter=$("filter").value;
 $("total").textContent=rows.length;$("spaces").textContent=rows.filter(function(x){return x.type==="Space request"}).length;$("pets").textContent=rows.filter(function(x){return x.type==="Pet show"}).length;
 var contractFilter=$("contractFilter").value;
@@ -236,17 +266,33 @@ statuses.forEach(function(status){
 });
 $("count").textContent=tr("Showing ","المعروض: ")+filtered.length+tr(" request(s)"," طلب");
 var list=$("list");while(list.firstChild)list.removeChild(list.firstChild);
-if(!filtered.length){put(list,"div","empty",tr("No matching demo requests on this device yet. Submit a test request from the visitor website.","ما في طلبات تجريبية مطابقة على هالجهاز. جرّبي إرسال طلب من موقع الزوار."));return}
+if(!filtered.length){put(list,"div","empty",tr("No matching applications. New submissions will appear here automatically.","لا توجد طلبات مطابقة. ستظهر الطلبات الجديدة هنا تلقائيًا."));return}
 filtered.forEach(function(row,i){newCard(list,row,i)});
 }catch(error){$("list").textContent=tr("Could not display requests. Try refreshing this page.","تعذر عرض الطلبات. جرّبي تحديث الصفحة.");}}
 $("lang").addEventListener("click",function(){lang=lang==="en"?"ar":"en";labels();render()});
 $("search").addEventListener("input",render);$("filter").addEventListener("change",render);$("contractFilter").addEventListener("change",render);
 $("download").addEventListener("click",function(){var rows=load();if(!rows.length)return;var keys=["id","date","type","brand","contact","owner","phone","email","space","zone","custom","show","pet","species","breed","age","status","contractStage","notes","contactedAt","messageLang"];
-var quote=function(v){return '"'+String(v==null?"":v).replace(/"/g,'""')+'"'};
+var quote=function(v){if(typeof v==="string"&&/^[=+@\-\t\r]/.test(v))v="\'"+v;return '"'+String(v==null?"":v).replace(/"/g,'""')+'"'};
 var csv=[keys.join(",")].concat(rows.map(function(r){return keys.map(function(k){return quote(r[k])}).join(",")})).join("\r\n");
 var b=new Blob(["\uFEFF",csv],{type:"text/csv;charset=utf-8"}),url=URL.createObjectURL(b),a=document.createElement("a");
-a.href=url;a.download="pawpark-demo-requests.csv";document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url)},1000)});
-labels();render();
+a.href=url;a.download="pawpark-applications.csv";document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url)},1000)});
+$("signIn").addEventListener("click",async function(){
+ $("signIn").disabled=true;$("authState").textContent="";
+ try{await signInAdmin()}catch(e){$("authState").textContent=tr("Sign-in could not be completed. Allow the Google popup and try again.","تعذر إكمال الدخول. اسمح بنافذة Google وحاول مجددًا.")}
+ finally{$("signIn").disabled=false}
+});
+$("signOut").addEventListener("click",function(){signOutAdmin().catch(()=>{$("authState").textContent=tr("Please try signing out again.","يرجى محاولة تسجيل الخروج مجددًا.")})});
+watchAdmin(function(user){
+ if(unsubscribe){unsubscribe();unsubscribe=null}
+ activeAdmin=authorizedAdmin(user);rowsCache=[];serverRows=[];pending.clear();
+ $("list").replaceChildren();["total","spaces","pets"].forEach(id=>$(id).textContent="0");$("statusOverview").replaceChildren();$("count").textContent="";
+ $("dashboard").hidden=!activeAdmin;$("adminGate").hidden=activeAdmin;$("signOut").hidden=!user;
+ $("authState").textContent=user&&!activeAdmin?tr("This account is not authorized to access customer records.","هذا الحساب غير مصرح له بالاطلاع على بيانات العملاء."):"";
+ if(activeAdmin){render();unsubscribe=watchApplications(refreshRows,function(){
+   serverRows=[];rowsCache=[];render();saveNotice(tr("Could not load applications. Check your connection and sign in again.","تعذر تحميل الطلبات. تحقق من الاتصال وسجّل الدخول مجددًا."));
+ })}
+});
+labels();
 })();
 </script>
 </body></html>
