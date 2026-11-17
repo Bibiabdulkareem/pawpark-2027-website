@@ -10,13 +10,12 @@ The following files have been committed:
 - [index.html](index.html) — public visitor layout, responsive zones, demo space request and pet show registration, English/Arabic switching.
 - [admin.html](admin.html) — **demo-only** request viewer with search and CSV download. **Not secured** and not suitable for personal data.
 - [assets/pawapp-logo.svg](assets/pawapp-logo.svg) — PawApp logo.
-- [.github/workflows/deploy-pages.yml](.github/workflows/deploy-pages.yml) — GitHub Pages deployment workflow.
 - [DESIGN_SPEC.md](DESIGN_SPEC.md) — approved spec for full production implementation.
 - [QA_AND_NOTIFICATION_PLAN.md](QA_AND_NOTIFICATION_PLAN.md) — testing and notifications plan.
 
 ## Preview the website
 
-Configure **Settings → Pages → Build and deployment → Source = GitHub Actions** if not already enabled, then check the **Actions** tab for successful deployment. After deployment, public URL should be:
+Open **Settings → Pages → Build and deployment → Source = Deploy from a branch → Branch = main → Folder = /(root) → Save**. After GitHub Pages finishes deploying, the public URL should be:
 
 https://bibiabdulkareem.github.io/pawpark-2027-website/
 
