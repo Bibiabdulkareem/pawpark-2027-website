@@ -1,0 +1,207 @@
+/* PawPark 2027: faithful reconstruction from the owner's original Canva design.
+   Canva "pawpark event" / DAHbGm_9ZZA, page 1, five 1366 x 768 sections.
+   Override visual presentation only: Firebase, forms, application IDs and JS stay unchanged.
+   IMPORTANT: The approved date is 21-23 January 2027 (not Canva's old 20-25). */
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Cairo:wght@400;500;600;700;800;900&display=swap');
+:root{--blue:#003e8e;--cream:#f6f6e9;--beige:#eddeae;--yellow:#eddeae;--ink:#003e8e}
+body{background:var(--cream);color:var(--blue);font-family:Arial,'Segoe UI',sans-serif}
+html{scroll-behavior:smooth}
+.demo{display:none!important}
+.container{max-width:none;width:min(100%,1366px);margin-inline:auto}
+h1,h2,h3,.heading,.show-band{font-family:Anton,Impact,'Arial Narrow',sans-serif;font-weight:400!important;letter-spacing:0!important}
+h1,h2,h3{line-height:1!important}
+.btn,.pill{border-radius:0;box-shadow:none}
+.btn:hover,.pill:hover{filter:brightness(.97)}
+/* Navigation is slim floating website chrome, separate from the original Canva art. */
+.top{position:absolute;top:0;left:0;right:0;z-index:50;background:transparent;border:0;box-shadow:none}
+.top-inner{width:min(100%,1366px);max-width:none;min-height:72px;padding:10px 30px;justify-content:flex-end;gap:16px}
+.top .brand{margin-right:auto;gap:0}
+.top .brand-word{display:none!important}
+.top .official-pawapp-logo{width:54px!important;height:54px!important;min-width:54px!important;background:transparent;border-radius:10px;object-fit:contain}
+.topnav{gap:12px}
+.topnav .navlink{color:#fff}
+.topnav .pill{border:1px solid rgba(255,255,255,.68);color:#fff;background:rgba(0,35,86,.48)}
+.topnav .btn.yellow{background:var(--beige);color:var(--blue);border-radius:4px}
+/* HOME - exact original desktop composition, adapted without rasterizing the form. */
+.hero{background:#003e8e;color:#f6f6e9;overflow:hidden}
+.hero .hero-layout{width:min(100%,1366px);max-width:none;position:relative;display:block!important;height:768px;min-height:768px}
+.hero-copy{display:block!important;position:static;width:auto;max-width:none;padding:0!important;margin:0;text-align:left}
+.hero h1{position:absolute;z-index:3;top:45px;left:5.62%;width:55%;max-width:none;margin:0!important;color:#eddeae;font-size:clamp(48px,5.66vw,77.33px)!important;line-height:1!important;text-transform:none}
+.hero h1 br{display:none}
+.hero h1 span{display:inline!important}
+.hero .sub{position:absolute;z-index:4;left:20.43%;top:122px;font-size:26.67px;line-height:1.2;max-width:none;margin:0;color:var(--cream);font-weight:400}
+.hero .eyebrow{position:absolute;z-index:3;left:13.86%;top:188px;font-size:13.33px;line-height:1.2;font-weight:800;letter-spacing:-.02em;text-transform:none;color:var(--cream)}
+.hero .event-line{position:absolute;z-index:4;left:12.37%;top:245px;font-weight:700;font-size:26.64px;line-height:1.2;margin:0;color:var(--cream);display:flex;align-items:center;gap:15px}
+.hero .event-line:nth-of-type(3){top:303px}
+.hero .event-line .emoji{display:inline-flex;justify-content:center;align-items:center;min-width:40px;font-size:29px}
+.hero-actions{display:block;position:absolute;left:15.27%;top:465px;width:338px;max-width:45%;padding:0;margin:0}
+.hero-actions small{display:block;position:absolute;left:0;width:100%;font-size:13.44px;font-weight:400;letter-spacing:0;color:var(--cream);text-align:center}
+.hero-actions small:first-of-type{top:0}
+.hero-actions small:nth-of-type(2){top:165px}
+.hero-actions .btn{position:absolute;left:0;width:100%;height:81px;min-height:81px;border-radius:0;padding:14px 10px;font-size:15.45px;font-weight:800;box-shadow:none;letter-spacing:0}
+.hero-actions .btn.white{top:34px;background:#fff;color:var(--blue)}
+.hero-actions .btn.beige{top:195px;background:var(--beige);color:var(--blue)}
+.hero-img{position:absolute!important;z-index:1;left:61%;right:auto;top:-18px;width:43.46%;max-width:none;height:805px;padding:0!important;display:block}
+.hero-img::before{content:"";display:block;position:absolute;left:-22px;top:182px;width:110%;height:605px;background:var(--beige);border-radius:43%;opacity:1}
+.hero-img .media.has-photo{display:block;width:100%;max-width:none!important;min-height:0!important;height:100%!important;aspect-ratio:auto!important;padding:0!important;border-radius:0!important;border:0!important;background:transparent!important}
+.hero-img .photo{object-fit:cover;object-position:center;opacity:1}
+.hero-img .media::after{display:none}
+/* EXPLORE OUR ZONES - three widely spaced tall rounded Canva cards. */
+.zones{background:var(--cream);padding:0!important;position:relative;overflow:hidden}
+.zones>.container{width:min(100%,1366px);min-height:768px;padding:0 19px 56px}
+.zones .title-band{position:relative;margin:0 0 89px;padding:88px 0 0 44px;font-size:63.68px!important;line-height:1.08;min-height:231px;font-weight:400}
+.zones .title-band::before{content:"";display:block;position:absolute;z-index:0;top:60px;left:-470px;width:795px;height:133px;border-radius:70px;background:var(--blue)}
+.zones .title-band>span{position:relative;z-index:1}
+.zones .title-band .band{display:inline;background:transparent;color:var(--cream);border-radius:0;padding:0}
+.zones .title-band>span:last-child{color:var(--blue)}
+.zone-grid{display:grid;grid-template-columns:repeat(3,minmax(0,386px))!important;justify-content:space-between;gap:20px}
+.zone,.zone:nth-child(2){min-height:480px;box-shadow:none!important;border:1px solid #f3a6c5!important;border-radius:43px!important;padding:21px 22px 18px!important;display:flex;flex-direction:column;align-items:stretch;background:var(--beige);color:var(--blue)}
+.zone:first-child{background:var(--beige)}
+.zone:nth-child(2){background:var(--cream)}
+.zone:nth-child(3){background:var(--blue);color:#fff}
+.zone .media.has-photo{height:284px!important;width:100%;min-height:284px!important;aspect-ratio:340/284!important;border-radius:0!important;background:transparent!important}
+.zone .media.has-photo .photo{object-fit:cover;object-position:center}
+.zone h3{margin:auto 0 39px!important;padding-left:24px;text-align:left;font-size:clamp(25px,3.11vw,42.36px)!important;line-height:1.04!important;color:var(--blue);font-weight:400}
+.zone:nth-child(3) h3{color:#fff;padding-left:0;text-align:center}
+.zone-help{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+/* BUSINESS APPLICATION: the two original translucent landscapes sit left of the framed form. */
+.booking{position:relative;padding:0!important;background:var(--cream);scroll-margin-top:0;overflow:hidden}
+.booking>.container{position:relative;width:min(100%,1366px);min-height:768px;padding:0}
+.booking-title{border:0!important;padding:0;margin:0;position:relative;height:178px}
+.booking-title::before{content:"";position:absolute;top:23px;left:-395px;background:var(--beige);width:896px;height:101px;border-radius:55px}
+.booking .booking-title .heading{position:absolute;left:22%;top:27px;z-index:2;font-size:clamp(48px,5.66vw,77.33px)!important;margin:0;color:var(--blue);line-height:1}
+.booking-title p{position:absolute;top:126px;left:24.5%;z-index:2;width:41%;font-size:17.33px;line-height:1.2;color:var(--blue);margin:0;font-weight:400}
+.book-grid{position:static;display:block!important}
+.book-photos{position:absolute;left:0;top:204px;width:47.87%;height:452px;display:block!important}
+.book-photos .media.has-photo{position:absolute;left:0;width:100%!important;aspect-ratio:auto!important;min-height:0!important;height:205px!important;border-radius:0!important;overflow:hidden}
+.book-photos .media.has-photo:first-child{top:0}
+.book-photos .media.has-photo:nth-child(2){top:269px;height:182px!important}
+.book-photos .media .photo{opacity:.51;object-fit:cover}
+.book-photos .media:first-child .photo{object-position:center top}
+.book-photos .media:nth-child(2) .photo{object-position:center bottom}
+.booking .form-panel{position:relative;z-index:1;margin:0 2.56% 30px auto;width:47.44%;min-width:0;padding:25px 30px;background:var(--cream);border:18px solid var(--blue);border-radius:4px;box-shadow:none}
+.booking .form-panel::before{content:"";position:absolute;z-index:-2;left:-31px;right:-60px;top:-36px;bottom:-42px;border-radius:60px 0 0 60px;border:0;background:var(--blue);pointer-events:none}
+.booking .field{margin:9px 0;gap:5px}
+.booking .field label,.booking .legend{font-weight:700;color:var(--blue);font-size:13px}
+.booking .field input,.booking .field select,.booking .field textarea{min-height:37px;border-radius:3px;background:#fff;padding:7px 12px;font-size:16px}
+.booking .sizes{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.booking .size{font-size:12px;min-height:54px;background:white;border:1px solid var(--blue);border-radius:3px;padding:5px 3px}
+.booking .size.active{background:var(--beige);border:2px solid var(--blue)}
+.booking .notice{font-size:11px}
+.booking button[type=submit]{background:var(--blue);border-radius:4px;color:#fff;min-height:47px}
+/* PET SHOW: big Canva exhibition title, gold banner and poodle photo. */
+.shine{background:var(--blue);color:var(--cream);padding:0!important;overflow:hidden}
+.shine>.container{width:min(100%,1366px);max-width:none;position:relative;min-height:768px}
+.shine-head{position:relative;max-width:none;width:100%;height:145px;padding:0}
+.shine-head .heading{position:relative;left:20.9%;top:17px;width:78%;max-width:none;font-size:clamp(42px,5.56vw,76px)!important;line-height:1;margin:0;color:var(--cream)}
+.shine-head .highlight{background:var(--beige);color:var(--blue);padding:0 16px}
+.shine-head p{position:absolute;z-index:3;top:109px;left:20.9%;font-size:17px;line-height:1.3;color:#fff;width:73%;margin:0}
+.show-grid{position:relative;width:100%;margin:0;background:transparent;color:var(--blue);border-radius:0;padding:56px 0 0;display:grid;grid-template-columns:50% 50%!important;gap:0;overflow:visible}
+.show-band{position:absolute;z-index:4;top:0;left:0;width:100%;height:56px;background:var(--beige);color:var(--blue);font-size:46.7px!important;line-height:56px;text-align:left;padding:0 7%}
+.show-left{display:block}
+.show-image.has-photo{width:100%;height:592px!important;aspect-ratio:auto!important;min-height:592px!important;border-radius:0!important}
+.show-image .photo{object-fit:cover;object-position:center}
+.show-form{background:var(--cream);padding:22px 30px 28px;border-radius:0;align-self:start}
+.show-form .field{margin:9px 0}
+.show-form .field label{font-size:12px}
+.show-form input,.show-form select{min-height:37px!important;padding:7px 10px!important;background:#fff;border:1px solid #ccd4e1;border-radius:3px}
+.show-form button[type=submit]{min-height:45px;border-radius:3px;background:var(--beige);color:var(--blue)}
+/* CONTACT - large clean lettering and original contact photo. */
+.contact{padding:0!important;background:var(--cream);overflow:hidden}
+.contact .contact-grid{width:min(100%,1366px);min-height:768px;display:grid;grid-template-columns:47.2% 52.8%!important;align-items:start;gap:0}
+.contact-grid>div:first-child{min-width:0;padding-top:45px}
+.contact h2 .band{background:transparent!important;border-radius:0;padding:0;color:var(--blue)}
+.contact .heading{font-size:clamp(49px,5.66vw,77.33px)!important;line-height:1;margin:0 0 122px;padding:0 22px}
+.contact-card{background:var(--blue);color:var(--cream);width:100%;max-width:none;margin:0;padding:35px 20px 40px 18%;font-family:Anton,Impact,sans-serif;font-weight:400;font-size:clamp(24px,3.43vw,47px);border-radius:50px 0 0 50px;min-height:310px;overflow-wrap:anywhere}
+.contact-card a{display:block;margin:30px 0;text-decoration:none;color:inherit}
+.contact-img.has-photo{min-height:0!important;height:712px!important;width:100%;aspect-ratio:auto!important;border-radius:0!important;margin-top:73px}
+.contact-img .photo{object-fit:cover;object-position:center}
+.footer{padding:28px 18px;background:var(--blue);font-family:Arial,sans-serif}
+.footer p{margin:4px 0}
+html[dir=rtl] h1,html[dir=rtl] h2,html[dir=rtl] h3,html[dir=rtl] .heading,html[dir=rtl] .show-band,html[dir=rtl] .contact-card{font-family:Cairo,Tahoma,Arial,sans-serif;font-weight:800!important}
+html[dir=rtl] .hero-copy{padding:0!important}
+html[dir=rtl] .hero h1,html[dir=rtl] .hero .eyebrow,html[dir=rtl] .hero .sub{text-align:right}
+html[dir=rtl] .zone h3{text-align:center;padding:0}
+html[dir=rtl] .booking-title .heading{text-align:right}
+html[dir=rtl] .show-band{text-align:right}
+html[dir=rtl] .show-form{text-align:right}
+/* Tablet & phone: keep original palette, hierarchy, image ratios and forms accessible. */
+@media(max-width:1000px){
+ .top{position:relative;background:var(--cream)}
+ .top-inner{min-height:66px;padding:8px 14px;justify-content:space-between}
+ .top .official-pawapp-logo{width:43px!important;height:43px!important;min-width:43px!important}
+ .topnav{gap:7px}
+ .topnav .navlink{display:none}
+ .topnav .pill{color:var(--blue);background:transparent;border:1px solid var(--blue);min-height:39px;padding:7px 12px}
+ .topnav .btn.yellow{min-height:39px;padding:7px 10px}
+ .container{width:100%;padding-inline:0}
+ .hero .hero-layout{height:auto;min-height:0;display:flex!important;flex-direction:column}
+ .hero-copy{width:100%;position:relative;display:flex!important;flex-direction:column;align-items:flex-start!important;padding:28px 20px 18px!important;text-align:left}
+ .hero h1,.hero .sub,.hero .eyebrow,.hero .event-line,.hero-actions{position:static!important;left:auto;top:auto;max-width:none;width:100%;text-align:left}
+ .hero h1{order:1;font-size:clamp(43px,8.5vw,78px)!important;line-height:1.05;margin:0 0 9px!important;white-space:normal}
+ .hero .sub{order:2;font-size:clamp(17px,4vw,24px);margin-bottom:18px}
+ .hero .eyebrow{order:3;font-size:clamp(12px,2.6vw,16px);line-height:1.6;margin-bottom:19px}
+ .hero .event-line{order:4;font-size:clamp(16px,3.4vw,23px);margin:0 0 12px;display:flex;gap:10px}
+ .hero .event-line .emoji{font-size:22px;min-width:30px}
+ .hero-actions{order:5;position:static;display:flex;flex-direction:column;align-self:stretch;padding:12px 0 0;margin:0;gap:8px}
+ .hero-actions small,.hero-actions .btn{position:static!important;left:auto;top:auto;width:100%;max-width:480px;align-self:center}
+ .hero-actions small{font-size:12px;margin-top:8px}
+ .hero-actions .btn{height:60px;min-height:60px}
+ .hero-img{position:relative!important;left:auto;top:auto;right:auto;width:100%;height:auto;padding:0!important}
+ .hero-img::before{left:13%;top:17%;width:90%;height:83%;border-radius:45px 0 0 45px}
+ .hero-img .media.has-photo{width:min(100%,620px);height:auto!important;aspect-ratio:594/805!important;margin-inline:auto}
+ .zones>.container{min-height:0;padding:0 15px 55px}
+ .zones .title-band{font-size:clamp(36px,6.8vw,62px)!important;min-height:150px;margin-bottom:12px;padding:48px 0 0 20px}
+ .zones .title-band::before{top:27px;left:-200px;width:430px;height:96px}
+ .zone-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:11px}
+ .zone,.zone:nth-child(2){min-height:0;padding:12px 9px 18px!important;border-radius:22px!important}
+ .zone .media.has-photo{min-height:0!important;height:auto!important;aspect-ratio:340/284!important}
+ .zone h3{font-size:clamp(15px,2.7vw,30px)!important;line-height:1.12!important;text-align:center;padding:0!important;margin:19px 0 4px!important}
+ .booking>.container{min-height:0}
+ .booking-title{height:auto;padding:30px 20px 15px}
+ .booking-title::before{top:20px;left:-100px;width:400px;height:85px}
+ .booking .booking-title .heading{position:relative;top:auto;left:auto;font-size:clamp(40px,8vw,76px)!important;padding:0;margin-bottom:18px}
+ .booking-title p{position:relative;top:auto;left:auto;width:100%;font-size:15px;line-height:1.5;padding:0;margin:0}
+ .book-grid{position:relative;display:flex!important;flex-direction:column}
+ .book-photos{position:relative;left:auto;top:auto;width:100%;height:auto;display:flex!important;flex-direction:column;gap:12px!important}
+ .book-photos .media.has-photo,.book-photos .media.has-photo:nth-child(2){position:relative;top:auto;width:100%!important;height:auto!important;aspect-ratio:654/205!important;min-height:0!important}
+ .book-photos .media.has-photo:nth-child(2){aspect-ratio:654/182!important}
+ .booking .form-panel{margin:22px 15px 38px;width:calc(100% - 30px);padding:18px;border-width:10px}
+ .booking .form-panel::before{left:-10px;right:-10px;top:-10px;bottom:-10px;border-radius:20px}
+ .shine-head{height:auto;padding:22px 15px 30px}
+ .shine-head .heading{position:static;left:auto;top:auto;width:100%;font-size:clamp(43px,8.5vw,76px)!important}
+ .shine-head p{position:static;left:auto;top:auto;width:100%;margin:12px 0 0;font-size:15px;line-height:1.5}
+ .show-grid{display:flex!important;flex-direction:column;grid-template-columns:1fr!important;padding-top:55px}
+ .show-band{height:auto;min-height:55px;line-height:1.1;font-size:clamp(27px,6vw,44px)!important;padding:11px 15px}
+ .show-image.has-photo{height:auto!important;min-height:0!important;aspect-ratio:707/707!important}
+ .show-form{padding:22px 17px 34px;width:100%}
+ .contact .contact-grid{grid-template-columns:1fr!important;min-height:0}
+ .contact-grid>div:first-child{padding:30px 0 0}
+ .contact .heading{font-size:clamp(46px,8vw,76px)!important;padding:0 20px;margin:0 0 35px}
+ .contact-card{padding:18px 20px;min-height:0;border-radius:20px 0 0 20px;font-size:clamp(25px,5vw,45px)}
+ .contact-card a{margin:14px 0}
+ .contact-img.has-photo{margin-top:25px;width:100%;height:auto!important;aspect-ratio:752/712!important;min-height:0!important}
+ html[dir=rtl] .hero-copy{padding:28px 20px 18px!important;text-align:right}
+ html[dir=rtl] .hero h1,html[dir=rtl] .hero .sub,html[dir=rtl] .hero .eyebrow,html[dir=rtl] .hero .event-line,html[dir=rtl] .hero-actions{text-align:right}
+ html[dir=rtl] .booking .booking-title .heading{text-align:right}
+}
+@media(max-width:540px){
+ .hero h1{font-size:clamp(39px,9.3vw,58px)!important}
+ .hero .sub{font-size:17px}
+ .hero .eyebrow{font-size:12px}
+ .hero .event-line{font-size:15px;align-items:flex-start}
+ .zones .title-band{font-size:clamp(31px,7.5vw,43px)!important;padding-left:10px;min-height:124px}
+ .zones .title-band::before{width:310px;height:74px;left:-160px}
+ .zone-grid{gap:7px}
+ .zone,.zone:nth-child(2){padding:8px 5px 12px!important;border-radius:14px!important}
+ .zone h3{font-size:clamp(11px,2.9vw,16px)!important;margin:13px 0 5px!important}
+ .booking-title::before{width:300px;height:75px;left:-90px}
+ .booking .booking-title .heading{font-size:clamp(35px,8.5vw,53px)!important}
+ .booking .form-panel{border-width:7px;padding:13px}
+ .booking .size{font-size:10.5px;padding:5px 2px}
+ .shine-head .heading{font-size:clamp(35px,9vw,55px)!important;line-height:1.2}
+ .shine-head .highlight{padding:0 5px}
+ .show-band{font-size:clamp(25px,6vw,34px)!important}
+ .contact .heading{font-size:clamp(42px,10vw,59px)!important}
+ .contact-card{font-size:clamp(24px,6vw,33px)}
+}
