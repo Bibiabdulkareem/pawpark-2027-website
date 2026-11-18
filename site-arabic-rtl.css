@@ -1,0 +1,509 @@
+/* Arabic/RTL faithful responsive layout for PawPark 2027.
+ * Explicitly scoped to html[lang="ar"][dir="rtl"]. The approved English
+ * design, all Firebase calls, form schemas and original imagery are unchanged.
+ */
+html[lang="ar"][dir="rtl"] body{
+  font-family:Cairo,Tahoma,Arial,sans-serif;
+}
+html[lang="ar"][dir="rtl"] .top-inner{
+  direction:rtl;
+  justify-content:space-between;
+}
+html[lang="ar"][dir="rtl"] .top .topnav{
+  order:1;
+  flex-direction:row!important;
+  margin:0;
+  flex:0 1 auto;
+}
+html[lang="ar"][dir="rtl"] .top .brand{
+  order:2;
+  flex:0 0 auto;
+  margin:0!important;
+}
+html[lang="ar"][dir="rtl"] .top .official-pawapp-logo{
+  width:47px!important;
+  height:47px!important;
+  min-width:47px!important;
+  background:var(--cream)!important;
+  border-radius:9px;
+  padding:4px;
+}
+/* Hero: same Canva composition as English, mirrored to read from the right. */
+html[lang="ar"][dir="rtl"] .hero .hero-layout{direction:rtl}
+html[lang="ar"][dir="rtl"] .hero-copy{
+  text-align:right;
+  direction:rtl;
+}
+html[lang="ar"][dir="rtl"] .hero h1{
+  left:auto!important;
+  right:5.62%;
+  width:55%;
+  text-align:right;
+  line-height:1.15!important;
+  font-size:clamp(45px,5.2vw,71px)!important;
+}
+html[lang="ar"][dir="rtl"] .hero .sub{
+  left:auto;
+  right:20.43%;
+  text-align:right;
+  line-height:1.5;
+  font-size:24px;
+}
+html[lang="ar"][dir="rtl"] .hero .eyebrow{
+  left:auto;
+  right:13.86%;
+  text-align:right;
+  letter-spacing:0;
+  font-size:14px;
+}
+html[lang="ar"][dir="rtl"] .hero .event-line,
+html[lang="ar"][dir="rtl"] .hero .event-line:nth-of-type(3){
+  left:auto;
+  right:12.37%;
+  direction:rtl;
+  text-align:right;
+  font-size:clamp(20px,2vw,26px);
+  line-height:1.5;
+  max-width:55%;
+  display:flex;
+  justify-content:flex-start;
+}
+html[lang="ar"][dir="rtl"] .hero-actions{
+  left:auto;
+  right:15.27%;
+}
+html[lang="ar"][dir="rtl"] .hero-img{
+  left:auto!important;
+  right:61%!important;
+  direction:ltr;
+}
+html[lang="ar"][dir="rtl"] .hero-img::before{
+  left:auto;
+  right:-22px;
+}
+/* Zones: keep the highlighted first word and the blue background together. */
+html[lang="ar"][dir="rtl"] .zones .title-band{
+  text-align:right;
+  direction:rtl;
+  padding:88px 44px 0 0;
+  line-height:1.35;
+}
+html[lang="ar"][dir="rtl"] .zones .title-band::before{display:none!important}
+html[lang="ar"][dir="rtl"] .zones .title-band .band{
+  display:inline-block!important;
+  position:relative;
+  isolation:isolate;
+  background:transparent!important;
+  color:var(--cream);
+  padding:0!important;
+  border-radius:0;
+  vertical-align:middle;
+}
+html[lang="ar"][dir="rtl"] .zones .title-band .band::before{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  top:-4px;
+  bottom:-4px;
+  right:-700px;
+  left:-20px;
+  background:var(--blue);
+  border-radius:999px 0 0 999px;
+  pointer-events:none;
+}
+html[lang="ar"][dir="rtl"] .zones .title-band>span:last-child{
+  display:inline-block;
+  vertical-align:middle;
+  margin-inline-start:34px;
+  color:var(--blue);
+}
+html[lang="ar"][dir="rtl"] .zone-grid{direction:rtl}
+html[lang="ar"][dir="rtl"] .zone h3{
+  text-align:center;
+  padding:0!important;
+}
+/* Booking: beige only behind "احجز", photographs opposite the form on desktop. */
+html[lang="ar"][dir="rtl"] .booking-title{
+  direction:rtl;
+  text-align:right;
+}
+html[lang="ar"][dir="rtl"] .booking-title::before{display:none!important}
+html[lang="ar"][dir="rtl"] .booking .booking-title .heading{
+  left:auto!important;
+  right:22%;
+  text-align:right;
+  direction:rtl;
+  max-width:76%;
+  line-height:1.3!important;
+  font-size:clamp(45px,5.2vw,70px)!important;
+}
+html[lang="ar"][dir="rtl"] .booking-title .book-title-keyword{
+  display:inline-block;
+  position:relative;
+  isolation:isolate;
+  background:transparent!important;
+}
+html[lang="ar"][dir="rtl"] .booking-title .book-title-keyword::before{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  top:-5px;
+  bottom:-4px;
+  right:-500px;
+  left:-19px;
+  border-radius:999px 0 0 999px;
+  background:var(--beige);
+  pointer-events:none;
+}
+html[lang="ar"][dir="rtl"] .booking-title .book-title-rest{
+  display:inline-block;
+  margin-inline-start:25px;
+}
+html[lang="ar"][dir="rtl"] .booking-title p{
+  left:auto;
+  right:24.5%;
+  text-align:right;
+  line-height:1.7;
+}
+html[lang="ar"][dir="rtl"] .booking .book-grid{
+  direction:rtl;
+}
+html[lang="ar"][dir="rtl"] .booking .form-panel{
+  text-align:right;
+}
+html[lang="ar"][dir="rtl"] .booking .field label,
+html[lang="ar"][dir="rtl"] .booking .legend,
+html[lang="ar"][dir="rtl"] .show-form .field label{
+  text-align:right;
+  line-height:1.55;
+}
+html[lang="ar"][dir="rtl"] .booking .field input:not([dir="ltr"]),
+html[lang="ar"][dir="rtl"] .booking .field select,
+html[lang="ar"][dir="rtl"] .show-form input:not([dir="ltr"]),
+html[lang="ar"][dir="rtl"] .show-form select{
+  direction:rtl;
+  text-align:right;
+}
+html[lang="ar"][dir="rtl"] .booking .sizes{direction:rtl}
+/* Pet show: headline, beige section band and poodle must not collide. */
+html[lang="ar"][dir="rtl"] .shine-head{
+  height:180px;
+  direction:rtl;
+}
+html[lang="ar"][dir="rtl"] .shine-head .heading{
+  left:auto!important;
+  right:20.9%;
+  width:78%;
+  direction:rtl;
+  text-align:right;
+  line-height:1.35!important;
+  font-size:clamp(40px,4.6vw,63px)!important;
+}
+html[lang="ar"][dir="rtl"] .shine-head .highlight{
+  display:inline-block;
+  vertical-align:baseline;
+  line-height:1.35;
+  padding:0 12px;
+}
+html[lang="ar"][dir="rtl"] .shine-head p{
+  left:auto;
+  right:20.9%;
+  width:73%;
+  text-align:right;
+  line-height:1.7;
+  top:114px;
+  font-size:16px;
+}
+html[lang="ar"][dir="rtl"] .show-grid{
+  direction:rtl;
+  padding-top:74px;
+}
+html[lang="ar"][dir="rtl"] .show-band{
+  direction:rtl;
+  text-align:right;
+  display:flex;
+  justify-content:flex-start;
+  align-items:center;
+  height:auto;
+  min-height:74px;
+  padding:10px 5%;
+  line-height:1.4;
+  font-size:clamp(27px,3.1vw,42px)!important;
+  white-space:normal;
+}
+html[lang="ar"][dir="rtl"] .show-form{
+  direction:rtl;
+  text-align:right;
+}
+/* Contact: image on left and readable right-aligned contact details on right. */
+html[lang="ar"][dir="rtl"] .contact .contact-grid{
+  direction:rtl;
+}
+html[lang="ar"][dir="rtl"] .contact .heading{
+  direction:rtl;
+  text-align:right;
+  line-height:1.28!important;
+  margin-bottom:75px;
+}
+html[lang="ar"][dir="rtl"] .contact-card{
+  direction:rtl;
+  text-align:right;
+  padding:35px 10% 40px 20px;
+  border-radius:0 50px 50px 0;
+  font-size:clamp(24px,3vw,40px)!important;
+}
+html[lang="ar"][dir="rtl"] .contact-card a{
+  display:flex;
+  direction:rtl;
+  flex-direction:row;
+  align-items:center;
+  justify-content:flex-start;
+  gap:12px;
+  min-width:0;
+}
+html[lang="ar"][dir="rtl"] .contact-card a [dir="ltr"]{
+  direction:ltr;
+  unicode-bidi:isolate;
+  display:inline-block;
+}
+html[lang="ar"][dir="rtl"] .footer{
+  direction:rtl;
+  text-align:center;
+}
+@media(max-width:1000px){
+  html[lang="ar"][dir="rtl"] .top-inner{direction:rtl;justify-content:space-between}
+  html[lang="ar"][dir="rtl"] .top .official-pawapp-logo{
+    width:40px!important;height:40px!important;min-width:40px!important;
+    padding:3px;
+  }
+  html[lang="ar"][dir="rtl"] .hero-copy{
+    direction:rtl;
+    text-align:right!important;
+    align-items:flex-end!important;
+    padding:28px 20px 18px!important;
+  }
+  html[lang="ar"][dir="rtl"] .hero h1,
+  html[lang="ar"][dir="rtl"] .hero .sub,
+  html[lang="ar"][dir="rtl"] .hero .eyebrow,
+  html[lang="ar"][dir="rtl"] .hero .event-line,
+  html[lang="ar"][dir="rtl"] .hero-actions{
+    position:static!important;
+    right:auto!important;
+    left:auto!important;
+    max-width:none!important;
+    width:100%;
+    text-align:right!important;
+  }
+  html[lang="ar"][dir="rtl"] .hero h1{
+    order:1;
+    font-size:clamp(37px,7.6vw,63px)!important;
+    line-height:1.3!important;
+    margin:0 0 8px!important;
+  }
+  html[lang="ar"][dir="rtl"] .hero .sub{
+    order:2;font-size:clamp(17px,3.8vw,22px);line-height:1.55;
+    margin:0 0 16px;
+  }
+  html[lang="ar"][dir="rtl"] .hero .eyebrow{
+    order:3;font-size:clamp(12px,2.7vw,15px);line-height:1.6;
+    margin-bottom:16px;
+  }
+  html[lang="ar"][dir="rtl"] .hero .event-line{
+    order:4;
+    direction:rtl;
+    justify-content:flex-start;
+    font-size:clamp(15px,3.4vw,22px);
+    line-height:1.6;
+    margin:0 0 8px;
+  }
+  html[lang="ar"][dir="rtl"] .hero-actions{
+    order:5;
+    direction:rtl;
+    align-items:stretch;
+    align-self:stretch;
+    padding-top:14px;
+    margin:0;
+  }
+  html[lang="ar"][dir="rtl"] .hero-actions small,
+  html[lang="ar"][dir="rtl"] .hero-actions .btn{
+    text-align:center;
+  }
+  html[lang="ar"][dir="rtl"] .hero-img{
+    position:relative!important;
+    right:auto!important;
+    left:auto!important;
+    width:100%;
+  }
+  html[lang="ar"][dir="rtl"] .hero-img::before{
+    right:13%;
+    left:auto;
+    border-radius:0 45px 45px 0;
+  }
+  html[lang="ar"][dir="rtl"] .zones .title-band{
+    text-align:right;
+    direction:rtl;
+    padding:48px 20px 0 0;
+    min-height:150px;
+    font-size:clamp(34px,6.7vw,58px)!important;
+    line-height:1.45;
+  }
+  html[lang="ar"][dir="rtl"] .zones .title-band .band::before{
+    top:-6px;
+    bottom:-6px;
+    right:-38px;
+    left:-16px;
+  }
+  html[lang="ar"][dir="rtl"] .zones .title-band>span:last-child{
+    margin-inline-start:26px;
+  }
+  html[lang="ar"][dir="rtl"] .booking .booking-title{
+    padding:28px 20px 15px;
+    direction:rtl;
+  }
+  html[lang="ar"][dir="rtl"] .booking .booking-title .heading{
+    position:relative!important;
+    right:auto!important;
+    left:auto!important;
+    width:100%;
+    max-width:none;
+    font-size:clamp(34px,7.3vw,55px)!important;
+    line-height:1.4!important;
+    text-align:right;
+    margin:0 0 16px!important;
+  }
+  html[lang="ar"][dir="rtl"] .booking-title .book-title-keyword::before{
+    right:-22px;
+    left:-12px;
+    top:-7px;
+    bottom:-7px;
+  }
+  html[lang="ar"][dir="rtl"] .booking-title .book-title-rest{
+    margin-inline-start:22px;
+  }
+  html[lang="ar"][dir="rtl"] .booking-title p{
+    position:relative!important;
+    right:auto;
+    left:auto;
+    width:100%;
+    text-align:right;
+    line-height:1.7;
+  }
+  html[lang="ar"][dir="rtl"] .booking .book-grid{direction:rtl}
+  html[lang="ar"][dir="rtl"] .booking .form-panel{width:calc(100% - 30px)}
+  html[lang="ar"][dir="rtl"] .shine>.container{min-height:0}
+  html[lang="ar"][dir="rtl"] .shine-head{
+    height:auto;
+    padding:22px 16px 26px;
+    direction:rtl;
+  }
+  html[lang="ar"][dir="rtl"] .shine-head .heading{
+    position:relative!important;
+    right:auto!important;
+    left:auto!important;
+    width:100%;
+    font-size:clamp(32px,6.3vw,52px)!important;
+    line-height:1.45!important;
+    text-align:right;
+    margin:0!important;
+  }
+  html[lang="ar"][dir="rtl"] .shine-head .highlight{
+    display:inline-block;
+    padding:0 9px;
+    line-height:1.45;
+  }
+  html[lang="ar"][dir="rtl"] .shine-head p{
+    position:relative!important;
+    right:auto;
+    left:auto;
+    top:auto;
+    width:100%;
+    margin:10px 0 0;
+    text-align:right;
+    font-size:clamp(13px,2.7vw,16px);
+    line-height:1.7;
+  }
+  html[lang="ar"][dir="rtl"] .show-grid{
+    direction:rtl;
+    display:flex!important;
+    flex-direction:column;
+    padding-top:0!important;
+  }
+  html[lang="ar"][dir="rtl"] .show-left{
+    display:flex!important;
+    flex-direction:column;
+  }
+  html[lang="ar"][dir="rtl"] .show-band{
+    position:relative!important;
+    top:auto;
+    right:auto;
+    left:auto;
+    width:100%;
+    height:auto;
+    min-height:60px;
+    padding:11px 16px;
+    font-size:clamp(22px,5.2vw,33px)!important;
+    line-height:1.4;
+    text-align:right;
+  }
+  html[lang="ar"][dir="rtl"] .show-image.has-photo{
+    position:relative;
+    width:100%;
+    min-height:0!important;
+  }
+  html[lang="ar"][dir="rtl"] .contact .contact-grid{direction:rtl}
+  html[lang="ar"][dir="rtl"] .contact .heading{
+    text-align:right;
+    line-height:1.35!important;
+    margin-bottom:35px;
+    font-size:clamp(36px,7.5vw,58px)!important;
+  }
+  html[lang="ar"][dir="rtl"] .contact-card{
+    width:100%;
+    min-height:0;
+    border-radius:0 22px 22px 0;
+    padding:22px 20px;
+    font-size:clamp(22px,4.3vw,34px)!important;
+  }
+  html[lang="ar"][dir="rtl"] .contact-card a{
+    margin:14px 0;
+    flex-wrap:nowrap;
+    gap:9px;
+    text-align:right;
+  }
+}
+@media(max-width:540px){
+  html[lang="ar"][dir="rtl"] .hero h1{font-size:clamp(33px,8.2vw,42px)!important}
+  html[lang="ar"][dir="rtl"] .hero .sub{font-size:17px}
+  html[lang="ar"][dir="rtl"] .hero .eyebrow{font-size:12px}
+  html[lang="ar"][dir="rtl"] .hero .event-line{font-size:15px;line-height:1.65}
+  html[lang="ar"][dir="rtl"] .zones .title-band{
+    padding:40px 10px 0 0;
+    min-height:119px;
+    font-size:clamp(30px,7.1vw,39px)!important;
+    line-height:1.35;
+  }
+  html[lang="ar"][dir="rtl"] .zones .title-band .band::before{
+    right:-26px;
+    left:-12px;
+    top:-7px;
+    bottom:-7px;
+  }
+  html[lang="ar"][dir="rtl"] .zones .title-band>span:last-child{
+    margin-inline-start:18px;
+  }
+  html[lang="ar"][dir="rtl"] .booking .booking-title .heading{
+    font-size:clamp(32px,7.8vw,43px)!important;
+  }
+  html[lang="ar"][dir="rtl"] .booking-title .book-title-rest{
+    margin-inline-start:18px;
+  }
+  html[lang="ar"][dir="rtl"] .shine-head .heading{
+    font-size:clamp(29px,7.1vw,39px)!important;
+  }
+  html[lang="ar"][dir="rtl"] .show-band{
+    font-size:clamp(22px,5.4vw,28px)!important;
+  }
+  html[lang="ar"][dir="rtl"] .contact-card{
+    font-size:clamp(21px,5vw,28px)!important;
+  }
+}
