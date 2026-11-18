@@ -19,12 +19,12 @@ if (emulated) {
 }
 const persistenceReady = setPersistence(auth, browserSessionPersistence);
 export const authorizedAdmin = user => !!user && user.emailVerified
-  && user.email === 'bibi@pawapp.net'
+  && typeof user.email === 'string' && user.email.toLowerCase().endsWith('@pawapp.net')
   && user.providerData.some(p => p.providerId === 'google.com');
 export async function signInAdmin() {
   await persistenceReady;
   const provider = new GoogleAuthProvider();
-  provider.setCustomParameters({ prompt: 'select_account', login_hint: 'bibi@pawapp.net' });
+  provider.setCustomParameters({ prompt: 'select_account', hd: 'pawapp.net' });
   return signInWithPopup(auth, provider);
 }
 export const signOutAdmin = () => signOut(auth);
