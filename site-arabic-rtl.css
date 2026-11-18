@@ -998,3 +998,35 @@ html[lang="ar"][dir="rtl"] .contact-img.has-photo{height:712px!important;min-hei
 @media screen and (min-width:1001px){
  html[lang="ar"][dir="rtl"] .hero .hero-img{left:-4%!important;right:auto!important;}
 }
+
+/* Arabic phone only: make the hero dog photo end flush like English,
+   with no exposed beige decorative backdrop or blue/beige footer gap. */
+@media screen and (max-width:540px){
+  html[lang="ar"][dir="rtl"] .hero .hero-img{
+    padding:0!important;
+    margin:0!important;
+    width:100%!important;
+    height:auto!important;
+    overflow:hidden!important;
+  }
+  html[lang="ar"][dir="rtl"] .hero .hero-img::before{
+    content:none!important;
+    display:none!important;
+  }
+  html[lang="ar"][dir="rtl"] .hero .hero-img .media.has-photo{
+    width:100%!important;
+    max-width:100%!important;
+    height:auto!important;
+    margin:0!important;
+    padding:0!important;
+    border-radius:0!important;
+    aspect-ratio:594/805!important;
+    overflow:hidden!important;
+  }
+  html[lang="ar"][dir="rtl"] .hero .hero-img .photo{
+    display:block!important;
+    width:100%!important;
+    height:100%!important;
+    object-fit:cover!important;
+  }
+}
