@@ -311,3 +311,34 @@ html[lang="en"] .booking-title .book-title-rest{display:inline-block;margin-inli
     box-shadow:0 0 0 12px var(--blue)!important;
   }
 }
+
+
+/* English header only: park the official PawApp icon at the far upper-right,
+   away from the PawPark event title. Keep language and booking controls to its left.
+   Arabic remains untouched pending the owner's separate RTL redesign. */
+html[lang="en"] .top-inner{justify-content:flex-end}
+html[lang="en"] .top .brand{
+  order:2;
+  flex:0 0 auto;
+  margin:0!important;
+  position:relative;
+  z-index:1;
+}
+html[lang="en"] .top .topnav{
+  order:1;
+  margin-left:auto;
+  margin-right:0;
+  flex:0 1 auto;
+}
+html[lang="en"] .top .official-pawapp-logo{
+  width:47px!important;height:47px!important;min-width:47px!important;
+  padding:4px;
+  background:var(--cream)!important;
+  border-radius:9px;
+}
+@media(max-width:1000px){
+  html[lang="en"] .top .official-pawapp-logo{
+    width:40px!important;height:40px!important;min-width:40px!important;
+    padding:3px;
+  }
+}
