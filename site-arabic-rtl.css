@@ -701,3 +701,40 @@ html[lang="ar"][dir="rtl"] .contact-card{min-height:300px;display:flex;flex-dire
 html[lang="ar"][dir="rtl"] .contact-card a{display:flex;flex-direction:row;direction:rtl;justify-content:flex-start;align-items:center;gap:13px;margin:0!important;min-width:0;white-space:nowrap;text-align:right}
 html[lang="ar"][dir="rtl"] .contact-img.has-photo{height:712px!important;min-height:0!important;margin-top:73px!important}
 }
+
+
+/* 2026-11-18: Arabic desktop booking alignment against English reference. */
+/* Intentionally no effect on English or on screens 1000px wide and below. */
+@media screen and (min-width:1001px){
+  html[lang="ar"][dir="rtl"] .booking .booking-title{
+    min-height:178px!important;
+    padding:24px 6% 10px!important;
+  }
+  html[lang="ar"][dir="rtl"] .booking .booking-title .heading{
+    line-height:1.3!important;
+  }
+  html[lang="ar"][dir="rtl"] .booking-title .book-title-keyword::before{
+    top:2px!important;
+    bottom:2px!important;
+    right:-500px!important;
+    left:-12px!important;
+  }
+  html[lang="ar"][dir="rtl"] .booking-title .book-title-rest{
+    margin-inline-start:14px!important;
+  }
+  /* Reference desktop alignment: the first photo begins alongside the form. */
+  html[lang="ar"][dir="rtl"] .booking .book-photos{
+    left:auto!important;
+    right:0!important;
+    top:190px!important;
+  }
+  html[lang="ar"][dir="rtl"] .booking .book-photos .media.has-photo:first-child{
+    top:0!important;
+  }
+  html[lang="ar"][dir="rtl"] .booking .book-photos .media.has-photo:nth-child(2){
+    top:252px!important;
+  }
+  html[lang="ar"][dir="rtl"] .booking .form-panel{
+    margin:0 auto 36px 2.56%!important;
+  }
+}
