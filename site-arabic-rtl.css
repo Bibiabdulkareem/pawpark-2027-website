@@ -510,29 +510,134 @@ html[lang="ar"][dir="rtl"] .footer{
 
 
 /* 2026-11-18: laptop-only Arabic desktop positioning refinements. */
-/* Scope keeps the English design and all unreviewed mobile/tablet screens unchanged. */
+/* The rules below apply only above the existing 1000px desktop breakpoint.
+   They leave the English version, mobile/tablet layout, photos, forms and Firebase untouched. */
 @media (min-width:1001px) {
-  /* The approved desktop hero is a deliberate mirror: photo left, content right. */
-  html[lang="ar"][dir="rtl"] .hero .hero-img{
-    left:0!important;
-    right:auto!important;
+  /* Arabic navigation belongs on top of the dog photo, beside the PawApp logo. */
+  html[lang="ar"][dir="rtl"] .top .top-inner {
+    direction:ltr;
+    justify-content:flex-start;
+    align-items:center;
+    gap:10px;
+    padding:10px 18px;
   }
-  html[lang="ar"][dir="rtl"] .hero .hero-img::before{
-    left:auto!important;
-    right:-22px!important;
+  html[lang="ar"][dir="rtl"] .top .brand {
+    order:0;
+    flex:0 0 auto;
+    margin:0!important;
+  }
+  html[lang="ar"][dir="rtl"] .top .topnav {
+    order:1;
+    flex:0 1 auto;
+    display:flex;
+    direction:rtl;
+    flex-direction:row!important;
+    justify-content:flex-start;
+    gap:8px;
+    margin:0!important;
+    font-size:clamp(10px,0.82vw,12px);
+  }
+  html[lang="ar"][dir="rtl"] .top .topnav .navlink {
+    color:#fff;
+    white-space:nowrap;
+    text-shadow:0 1px 4px rgba(0,20,47,.85);
+  }
+  html[lang="ar"][dir="rtl"] .top .topnav .pill {
+    padding:7px 10px;
+    min-height:38px;
+    font-size:12px;
+  }
+  html[lang="ar"][dir="rtl"] .top .topnav .btn.yellow {
+    min-height:38px;
+    padding:7px 11px;
+    font-size:12px;
+    white-space:nowrap;
   }
 
-  /* Booking application: photographs right and application form left. */
-  html[lang="ar"][dir="rtl"] .booking .book-photos{
+  /* Hero: dog photo on the left edge, content on the right, with no overlap. */
+  html[lang="ar"][dir="rtl"] .hero .hero-img {
+    left:0!important;
+    right:auto!important;
+    width:43.46%;
+    height:805px;
+  }
+  html[lang="ar"][dir="rtl"] .hero .hero-img::before {
+    left:auto!important;
+    right:-22px!important;
+    border-radius:43% 0 0 43%;
+  }
+  html[lang="ar"][dir="rtl"] .hero .hero-img .photo {
+    object-position:center center;
+  }
+  html[lang="ar"][dir="rtl"] .hero .event-line {
+    right:12.2%;
+    max-width:45%;
+  }
+  html[lang="ar"][dir="rtl"] .hero .event-line:nth-of-type(3) {
+    top:310px;
+    right:12.2%;
+    max-width:43%;
+    align-items:flex-start;
+  }
+  html[lang="ar"][dir="rtl"] .hero .event-line:nth-of-type(3) span:last-child {
+    white-space:pre-line;
+    line-height:1.45;
+  }
+  html[lang="ar"][dir="rtl"] .hero-actions {
+    top:502px;
+    right:15.2%;
+  }
+
+  /* Space application: photos on right, form on left. */
+  html[lang="ar"][dir="rtl"] .booking .book-photos {
     left:auto!important;
     right:0!important;
   }
-  html[lang="ar"][dir="rtl"] .booking .form-panel{
+  html[lang="ar"][dir="rtl"] .booking .form-panel {
     margin:0 auto 30px 2.56%!important;
   }
-  html[lang="ar"][dir="rtl"] .booking .form-panel::before{
+  html[lang="ar"][dir="rtl"] .booking .form-panel::before {
     left:-60px!important;
     right:-31px!important;
     border-radius:0 60px 60px 0!important;
+  }
+  html[lang="ar"][dir="rtl"] .booking .booking-title .heading {
+    right:20%;
+    max-width:77%;
+    line-height:1.18!important;
+  }
+  html[lang="ar"][dir="rtl"] .booking-title .book-title-keyword {
+    padding:0 14px;
+    line-height:1.18;
+  }
+  html[lang="ar"][dir="rtl"] .booking-title .book-title-keyword::before {
+    top:-3px;
+    bottom:-3px;
+    right:-420px;
+    left:-10px;
+  }
+  html[lang="ar"][dir="rtl"] .booking-title .book-title-rest {
+    margin-inline-start:14px;
+  }
+
+  /* Pet show: align heading to right and raise the form section without overlap. */
+  html[lang="ar"][dir="rtl"] .shine-head {
+    height:145px;
+  }
+  html[lang="ar"][dir="rtl"] .shine-head .heading {
+    right:8%;
+    width:84%;
+    line-height:1.15!important;
+  }
+  html[lang="ar"][dir="rtl"] .shine-head p {
+    right:8%;
+    width:84%;
+    top:103px;
+  }
+  html[lang="ar"][dir="rtl"] .show-grid {
+    padding-top:74px;
+  }
+  html[lang="ar"][dir="rtl"] .show-band {
+    padding-right:6%;
   }
 }
