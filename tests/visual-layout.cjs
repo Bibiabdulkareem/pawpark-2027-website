@@ -47,14 +47,14 @@ const path=require('node:path');
         const info=(first,second)=>{
           const e=document.querySelector(first),n=document.querySelector(second);
           const p=getComputedStyle(e,'::before'),r=e.getBoundingClientRect(),nr=n.getBoundingClientRect();
-          return {text:e.textContent,pseudo:p.content,right:r.right+Math.abs(parseFloat(p.right)||0),nextLeft:nr.left};
+          return {text:e.textContent,pseudo:p.content,right:r.right+Math.abs(parseFloat(p.right)||0),nextLeft:nr.left,top:r.top,nextTop:nr.top};
         };
         return {zones:info('.zones .title-band .band','.zones .title-band>span:last-child'),
           booking:info('.booking-title .book-title-keyword','.booking-title .book-title-rest')};
       });
       for(const [name,ribbon] of Object.entries(ribbons)){
         assert.ok(ribbon.pseudo!=='none',name+' highlight missing');
-        assert.ok(ribbon.right<ribbon.nextLeft,name+' ribbon overlaps next word at '+width+': '+JSON.stringify(ribbon));
+        if(Math.abs(ribbon.top-ribbon.nextTop)<5)assert.ok(ribbon.right<ribbon.nextLeft,name+' ribbon overlaps next word on same line at '+width+': '+JSON.stringify(ribbon));
       }
       const bookGeometry=await page.evaluate(()=>{
         const bounds=sel=>{const r=document.querySelector(sel).getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width,height:r.height}};
@@ -67,8 +67,50 @@ const path=require('node:path');
         assert.ok(bookGeometry.photo2.top>bookGeometry.photo1.bottom,'Two translucent desktop images must be stacked '+JSON.stringify(bookGeometry));
       }
       console.log('PASS booking image geometry',width,JSON.stringify(bookGeometry));
-      if(width===390||width===1366)await page.screenshot({path:path.join('test-results','pawpark-'+width+'.png'),fullPage:true,animations:'disabled'});
+      if([375,390,1366].includes(width))await page.screenshot({path:path.join('test-results','pawpark-'+width+'.png'),fullPage:true,animations:'disabled'});
       console.log('PASS Canva visual geometry',width,JSON.stringify(metrics));
+
+      // Arabic visual verification is independent of English geometry assertions above.
+      await page.locator('#lang').click();
+      await page.waitForFunction(()=>document.documentElement.lang==='ar' && document.documentElement.dir==='rtl');
+      await page.evaluate(()=>document.fonts.ready);
+      const rtl=await page.evaluate(()=>{
+        const get=q=>{const e=document.querySelector(q),r=e.getBoundingClientRect();return {x:r.x,y:r.y,left:r.left,right:r.right,top:r.top,bottom:r.bottom,w:r.width,h:r.height,text:e.textContent.trim()}};
+        const border=(q)=>getComputedStyle(document.querySelector(q),'::before').content;
+        const headings=[...document.querySelectorAll('.zones .title-band span,.booking-title h2 span,.shine-head h2 span')].map(e=>({text:e.textContent.trim(),visible:e.getBoundingClientRect().width>0&&e.getBoundingClientRect().height>0}));
+        return {
+          viewport:innerWidth,scrollWidth:document.documentElement.scrollWidth,
+          cssLoaded:[...document.styleSheets].some(x=>x.href?.includes('site-arabic-rtl.css')),
+          heroTitle:get('.hero h1'),heroImage:get('.hero-img .media'),zoneTitle:get('.zones .title-band'),
+          zoneHighlight:get('.zones .title-band .band'),
+          zoneNext:get('.zones .title-band>span:last-child'),
+          bookingTitle:get('.booking-title .heading'),
+          bookingHighlight:get('.booking-title .book-title-keyword'),
+          bookingRest:get('.booking-title .book-title-rest'),
+          showTitle:get('.shine-head .heading'),showDescription:get('.shine-head p'),
+          showBand:get('.show-band'),showImage:get('.show-image'),showForm:get('.show-form'),
+          contactTitle:get('.contact .heading'),contactCard:get('.contact-card'),contactImage:get('.contact-img'),
+          bookPhotos:get('.book-photos'),bookForm:get('.booking .form-panel'),
+          zoneBg:border('.zones .title-band .band'),
+          headingSpans:headings
+        };
+      });
+      assert.ok(rtl.cssLoaded,'Missing Arabic-only CSS at '+width);
+      assert.ok(rtl.scrollWidth<=width+2,'Arabic horizontal overflow at '+width+': '+JSON.stringify(rtl));
+      assert.ok(rtl.headingSpans.every(h=>h.visible),'Arabic headings invisible at '+width+': '+JSON.stringify(rtl.headingSpans));
+      assert.ok(rtl.zoneBg!=='none','Arabic highlighted zones word lost its background '+width);
+      assert.ok(rtl.zoneHighlight.right<=width+1 && rtl.zoneHighlight.left>=-1,'Arabic highlighted zone word is offscreen at '+width);
+      assert.ok(rtl.zoneNext.right<=width+1 && rtl.zoneNext.left>=-1,'Arabic other zone word is offscreen at '+width);
+      assert.ok(rtl.showTitle.bottom<=rtl.showBand.top+2,'Arabic pet-show headline overlaps registration banner at '+width+': '+JSON.stringify(rtl));
+      assert.ok(rtl.contactCard.w>width*.34,'Arabic contact card is too small at '+width);
+      if(width>=1001){
+        assert.ok(rtl.heroImage.right<rtl.heroTitle.right && rtl.heroTitle.left>rtl.heroImage.left,'Arabic desktop hero must be mirrored '+width+': '+JSON.stringify(rtl));
+        assert.ok(rtl.contactImage.right<rtl.contactCard.left+25,'Arabic desktop contact must be mirrored '+width+': '+JSON.stringify(rtl));
+        assert.ok(rtl.bookForm.right<rtl.bookPhotos.left+25,'Arabic desktop booking form should be on left '+width+': '+JSON.stringify(rtl));
+      }
+      if([375,390,1366].includes(width))await page.screenshot({path:path.join('test-results','pawpark-ar-'+width+'.png'),fullPage:true,animations:'disabled'});
+      console.log('PASS Arabic RTL visual geometry',width,JSON.stringify(rtl));
+
       await ctx.close();
     }
   }finally{if(browser)await browser.close();server.kill();}
