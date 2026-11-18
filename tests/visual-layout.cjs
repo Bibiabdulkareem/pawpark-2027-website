@@ -47,14 +47,14 @@ const path=require('node:path');
         const info=(first,second)=>{
           const e=document.querySelector(first),n=document.querySelector(second);
           const p=getComputedStyle(e,'::before'),r=e.getBoundingClientRect(),nr=n.getBoundingClientRect();
-          return {text:e.textContent,pseudo:p.content,right:r.right+Math.abs(parseFloat(p.right)||0),nextLeft:nr.left};
+          return {text:e.textContent,pseudo:p.content,right:r.right+Math.abs(parseFloat(p.right)||0),nextLeft:nr.left,top:r.top,nextTop:nr.top};
         };
         return {zones:info('.zones .title-band .band','.zones .title-band>span:last-child'),
           booking:info('.booking-title .book-title-keyword','.booking-title .book-title-rest')};
       });
       for(const [name,ribbon] of Object.entries(ribbons)){
         assert.ok(ribbon.pseudo!=='none',name+' highlight missing');
-        assert.ok(ribbon.right<ribbon.nextLeft,name+' ribbon overlaps next word at '+width+': '+JSON.stringify(ribbon));
+        if(Math.abs(ribbon.top-ribbon.nextTop)<5)assert.ok(ribbon.right<ribbon.nextLeft,name+' ribbon overlaps next word on same line at '+width+': '+JSON.stringify(ribbon));
       }
       const bookGeometry=await page.evaluate(()=>{
         const bounds=sel=>{const r=document.querySelector(sel).getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width,height:r.height}};
@@ -67,7 +67,7 @@ const path=require('node:path');
         assert.ok(bookGeometry.photo2.top>bookGeometry.photo1.bottom,'Two translucent desktop images must be stacked '+JSON.stringify(bookGeometry));
       }
       console.log('PASS booking image geometry',width,JSON.stringify(bookGeometry));
-      if(width===390||width===1366)await page.screenshot({path:path.join('test-results','pawpark-'+width+'.png'),fullPage:true,animations:'disabled'});
+      if([375,390,1366].includes(width))await page.screenshot({path:path.join('test-results','pawpark-'+width+'.png'),fullPage:true,animations:'disabled'});
       console.log('PASS Canva visual geometry',width,JSON.stringify(metrics));
 
       // Arabic visual verification is independent of English geometry assertions above.
@@ -108,7 +108,7 @@ const path=require('node:path');
         assert.ok(rtl.contactImage.right<rtl.contactCard.left+25,'Arabic desktop contact must be mirrored '+width+': '+JSON.stringify(rtl));
         assert.ok(rtl.bookForm.right<rtl.bookPhotos.left+25,'Arabic desktop booking form should be on left '+width+': '+JSON.stringify(rtl));
       }
-      if(width===390||width===1366)await page.screenshot({path:path.join('test-results','pawpark-ar-'+width+'.png'),fullPage:true,animations:'disabled'});
+      if([375,390,1366].includes(width))await page.screenshot({path:path.join('test-results','pawpark-ar-'+width+'.png'),fullPage:true,animations:'disabled'});
       console.log('PASS Arabic RTL visual geometry',width,JSON.stringify(rtl));
 
       await ctx.close();
