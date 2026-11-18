@@ -993,3 +993,8 @@ html[lang="ar"][dir="rtl"] .contact-img.has-photo{height:712px!important;min-hei
     width:100%!important;margin:0!important;
   }
 }
+
+/* Arabic desktop: dog photo flush against the left viewport edge only. */
+@media screen and (min-width:1001px){
+ html[lang="ar"][dir="rtl"] .hero .hero-img{left:-4%!important;right:auto!important;}
+}
