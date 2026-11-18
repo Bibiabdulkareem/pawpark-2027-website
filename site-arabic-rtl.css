@@ -507,3 +507,32 @@ html[lang="ar"][dir="rtl"] .footer{
     font-size:clamp(21px,5vw,28px)!important;
   }
 }
+
+
+/* 2026-11-18: laptop-only Arabic desktop positioning refinements. */
+/* Scope keeps the English design and all unreviewed mobile/tablet screens unchanged. */
+@media (min-width:1001px) {
+  /* The approved desktop hero is a deliberate mirror: photo left, content right. */
+  html[lang="ar"][dir="rtl"] .hero .hero-img{
+    left:0!important;
+    right:auto!important;
+  }
+  html[lang="ar"][dir="rtl"] .hero .hero-img::before{
+    left:auto!important;
+    right:-22px!important;
+  }
+
+  /* Booking application: photographs right and application form left. */
+  html[lang="ar"][dir="rtl"] .booking .book-photos{
+    left:auto!important;
+    right:0!important;
+  }
+  html[lang="ar"][dir="rtl"] .booking .form-panel{
+    margin:0 auto 30px 2.56%!important;
+  }
+  html[lang="ar"][dir="rtl"] .booking .form-panel::before{
+    left:-60px!important;
+    right:-31px!important;
+    border-radius:0 60px 60px 0!important;
+  }
+}
