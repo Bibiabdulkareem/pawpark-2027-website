@@ -36,6 +36,7 @@ jobs:
             test-results/pawpark-*.png
             index.html
             site-canva-faithful.css
+            site-arabic-rtl.css
             site-fixes.css
             site-photos.css
             assets/
