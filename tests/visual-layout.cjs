@@ -33,6 +33,16 @@ const path=require('node:path');
       assert.equal(metrics.missingImages.length,0,'Photo / logo failed to load');
       assert.ok(metrics.scrollWidth<=width+2,'Horizontal overflow at '+width+': '+JSON.stringify(metrics));
       for(const k of ['hero','heroPhoto','zones','form','show','contact']) assert.ok(metrics[k]?.visible,'Missing element: '+k+' at '+width);
+      const headerGeometry=await page.evaluate(()=>{
+        const get=q=>{const r=document.querySelector(q).getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom}};
+        return {logo:get('.top .brand'),nav:get('.topnav'),title:get('.hero h1')};
+      });
+      assert.ok(headerGeometry.logo.left>=headerGeometry.nav.right-2,
+        'English logo should sit to the right of header navigation: '+width+' '+JSON.stringify(headerGeometry));
+      assert.ok(headerGeometry.logo.right<=width+2&&headerGeometry.logo.right>=width-65,
+        'English logo should sit in far right corner: '+width+' '+JSON.stringify(headerGeometry));
+      if(width>=1001)assert.ok(headerGeometry.logo.left>headerGeometry.title.right,
+        'English logo should not sit beside the event title: '+width+' '+JSON.stringify(headerGeometry));
       const ribbons=await page.evaluate(()=>{
         const info=(first,second)=>{
           const e=document.querySelector(first),n=document.querySelector(second);
